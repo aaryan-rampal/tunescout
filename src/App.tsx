@@ -1,22 +1,31 @@
+import { url } from "inspector";
+import { useState, useEffect } from "react";
 
 const App = () => {
-  const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
-  const REDIRECT_URI = 'http://localhost:5173/home'
-  const SCOPES = [
-    'user-read-private', 
-    'user-read-email',
-  ];
-  console.log(SPOTIFY_CLIENT_ID)
+  const [authUrl, setAuthUrl] = useState('')
 
-  const loginWithSpotify = () => {
-    const authUrl = `https://accounts.spotify.com/authorize?` +
+  useEffect(() => {
+    const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
+    const REDIRECT_URI = 'http://localhost:3001/callback'
+    const SCOPES = [
+      'user-read-private', 
+      'user-read-email',
+    ];
+
+    const authEndpoint = `https://accounts.spotify.com/authorize?` +
       `client_id=${SPOTIFY_CLIENT_ID}` +
       `&response_type=token` +
       `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-      // `&redirect_uri=${REDIRECT_URI}` +
       `&scope=${encodeURIComponent(SCOPES.join(' '))}`;
-    window.location.href = authUrl; // Redirect to Spotify authorization
-  };
+
+      setAuthUrl(authEndpoint)
+  }, [])
+
+  const handleLogin = () => {
+    if (authUrl) {
+      window.location.href = authUrl
+    }
+  }
 
   return (
     <div
@@ -48,7 +57,7 @@ const App = () => {
           fontSize: '16px',
           color: '#000000', 
         }}
-        onClick={loginWithSpotify}
+        onClick={handleLogin}
       >
         <img
           src="spotify-logo.png"
