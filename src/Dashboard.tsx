@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 const Dashboard: React.FC = () => {
-    const [songs, setSongs] = useState<any[]>([]);
-    const [currentIndex, setCurrentIndex] = useState(0); // Track current song index
-    const [interactions, setInteractions] = useState<number>(0); // Count interactions
-    const [currentSong, setCurrentSong] = useState<any | null>(null);
+    const [playlists, setPlaylists] = useState<any[]>([]);
+    const [selectedPlaylist, setSelectedPlaylist] = useState<any | null>(null);
     const [isLoading, setIsLoading] = useState(true); // Track loading state
-    const [songInteractions, setSongInteractions] = useState<Record<string, string>>({}); // Track like/dislike per song
 
-    const fetchRecentlyPlayed = async () => {
+    const fetchPlaylists = async () => {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
             console.error('No access token found');
@@ -16,7 +13,7 @@ const Dashboard: React.FC = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3001/api/recently-played', {
+            const response = await fetch('http://localhost:3001/api/get_playlists', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,9 +29,7 @@ const Dashboard: React.FC = () => {
             }
 
             const data = await response.json();
-            setSongs(data)
-            setCurrentSong(data[0])
-
+            setPlaylists(data)
         } catch (error) {
             console.error('Error:', error);
         } finally {
@@ -43,72 +38,86 @@ const Dashboard: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchRecentlyPlayed();
+        fetchPlaylists();
     }, []);
 
-const handleLikeDislike = (action: string) => {
-    console.log(`You ${action}d: ${currentSong?.name}`);
+    const handlePlaylistSelection = (playlist: any) => {
+        setSelectedPlaylist(playlist); // Set the selected playlist
+    };
 
-    setSongInteractions((prevState) => ({
-        ...prevState,
-        [currentSong.id]: action, // Add or update the like/dislike for the current song ID
-    }));
-    const nextIndex = currentIndex + 1;
-    sendInteractionToBackend(currentSong.id, action);
+    const handleProceed = async () => {
+        const accessToken = localStorage.getItem('access_token');
+        if (selectedPlaylist) {
+            console.log('Selected Playlist:', selectedPlaylist);
+            try {
+                const response = await fetch('http://localhost:3001/api/generate_playlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ access_token: accessToken, playlist_id: selectedPlaylist.id }),
+                });
 
-    if (nextIndex < songs.length) {
-        setCurrentIndex(nextIndex); // Move to the next song
-        setCurrentSong(songs[nextIndex]); // Update current song
-    } else {
-        setCurrentSong(null); // No more songs to display
-    }
-
-    setInteractions(interactions + 1); // Increment interactions
-}
-
-const sendInteractionToBackend = async (songId: string, action: string) => {
-    try {
-        const response = await fetch('http://localhost:3001/api/song-interaction', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ songId, action }),
-        });
-
-        if (response.ok) {
-            console.log('Interaction sent successfully:', { songId, action });
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error('Error sending selected playlist to backend:', error.message);
+                    return;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setIsLoading(false);
+            }
         } else {
-            console.error('Failed to send interaction:', { songId, action });
+            // TODO: Show error message to user
+            console.error('No playlist selected');
         }
-    } catch (error) {
-        console.error('Error sending interaction:', error);
-    }
-};
-
-
+    };
 
     if (isLoading) {
         return <div>Loading...</div>; // Show loading message
     }
 
-    if (!currentSong) {
-        return <div>No more songs to display. Thanks for your feedback!</div>; // Handle case when no songs are left
-    }
     return (
         <div>
-            <h1>Recently Played</h1>
-            <div>
-                <img src={currentSong.image} alt={currentSong.name} style={{ width: '300px', height: '300px' }} />
-                <h2>{currentSong.name}</h2>
-                <p>By {currentSong.artists}</p>
+            <h1>Select a Playlist</h1>
+            <div
+                style={{
+                    maxHeight: '400px',
+                    overflowY: 'scroll',
+                    border: '1px solid #ccc',
+                    padding: '10px',
+                }}
+            >
+                {playlists.map((playlist) => (
+                    <div
+                        key={playlist.id}
+                        onClick={() => handlePlaylistSelection(playlist)}
+                        style={{
+                            padding: '10px',
+                            margin: '5px 0',
+                            cursor: 'pointer',
+                            backgroundColor: selectedPlaylist?.id === playlist.id ? '#f0f0f0' : 'white',
+                            border: '1px solid #ddd',
+                        }}
+                    >
+                        <img
+                            src={playlist.image}
+                            alt={playlist.name}
+                            style={{ width: '50px', height: '50px', marginRight: '10px' }}
+                        />
+                        <span>{playlist.name}</span>
+                    </div>
+                ))}
             </div>
-            <div>
-                <button onClick={() => handleLikeDislike('like')}>Like</button>
-                <button onClick={() => handleLikeDislike('dislike')}>Dislike</button>
-            </div>
+            <button
+                onClick={handleProceed}
+                style={{ marginTop: '10px', padding: '10px 20px', cursor: 'pointer' }}
+            >
+                Proceed
+            </button>
         </div>
     );
-    };
+};
 
 export default Dashboard;

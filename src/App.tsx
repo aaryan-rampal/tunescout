@@ -10,10 +10,8 @@ const App = () => {
     const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
     const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI
     const SCOPES = [
-      'user-read-private', 
-      'user-read-email',
-      'user-read-recently-played',
-      'user-top-read'
+      'playlist-read-private',
+      'playlist-read-collaborative'
     ];
 
     const authEndpoint = `https://accounts.spotify.com/authorize?` +
