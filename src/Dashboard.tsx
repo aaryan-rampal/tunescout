@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const Dashboard: React.FC = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState<any | null>(null);
+  const sentRequest = useRef(false); // Track if request has been sent
   const [isLoading, setIsLoading] = useState(true); // Track loading state
 
   const fetchPlaylists = async () => {
+    if (sentRequest.current) return;
+
     const accessToken = localStorage.getItem("access_token");
     if (!accessToken) {
       console.error("No access token found");
@@ -20,6 +23,7 @@ const Dashboard: React.FC = () => {
         },
         body: JSON.stringify({ access_token: accessToken }),
       });
+      sentRequest.current = true;
 
       if (!response.ok) {
         const error = await response.json();
