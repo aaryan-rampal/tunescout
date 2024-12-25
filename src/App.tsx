@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Callback from './Callback';
+import Dashboard from './Dashboard';
 
 const App = () => {
   const [authUrl, setAuthUrl] = useState('')
@@ -11,6 +12,8 @@ const App = () => {
     const SCOPES = [
       'user-read-private', 
       'user-read-email',
+      'user-read-recently-played',
+      'user-top-read'
     ];
 
     const authEndpoint = `https://accounts.spotify.com/authorize?` +
@@ -33,7 +36,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home handleLogin={handleLogin} />} />
         <Route path="/callback" element={<Callback />} />
-        <Route path="/dashboard" element={<h1>Dashboard</h1>} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
