@@ -5,6 +5,8 @@ const Dashboard: React.FC = () => {
   const [selectedPlaylist, setSelectedPlaylist] = useState<any | null>(null);
   const sentRequest = useRef(false); // Track if request has been sent
   const [isLoading, setIsLoading] = useState(true); // Track loading state
+  const [filteredSongs, setFilteredSongs] = useState<any[]>([]); // Store the filtered songs
+  const [showResults, setShowResults] = useState(false); // Toggle between selection and results
 
   const fetchPlaylists = async () => {
     if (sentRequest.current) return;
@@ -76,6 +78,10 @@ const Dashboard: React.FC = () => {
           );
           return;
         }
+
+        const data = response.json();
+        setFilteredSongs(data); 
+        setShowResults(true); // Switch to results view
       } catch (error) {
         console.error("Error:", error);
       } finally {

@@ -178,13 +178,13 @@ app.post("/api/generate_playlist", async (req, res) => {
     // Wait for all similar track requests to complete
     await Promise.all(similarTracksPromises);
     const filteredSimilarTracks = removeInvalid(allSimilarTracks, tracks);
-    console.log(filteredSimilarTracks);
 
     // TODO: 10 is a random value here, make it a parameter
     const similarTracksResults = getRandomValuesFromList(
       filteredSimilarTracks,
       10
     );
+    console.log(similarTracksResults)
 
     res.status(200).json(similarTracksResults);
   } catch (error) {
