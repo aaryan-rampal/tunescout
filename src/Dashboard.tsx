@@ -103,26 +103,46 @@ const Dashboard: React.FC = () => {
         }}
       >
         {playlists.map((playlist) => (
-          <div
-            key={playlist.id}
-            onClick={() => handlePlaylistSelection(playlist)}
-            style={{
-              padding: "10px",
-              margin: "5px 0",
-              cursor: "pointer",
-              backgroundColor:
-                selectedPlaylist?.id === playlist.id ? "#f0f0f0" : "white",
-              border: "1px solid #ddd",
-            }}
-          >
-            <img
-              src={playlist.image}
-              alt={playlist.name}
-              style={{ width: "50px", height: "50px", marginRight: "10px" }}
-            />
-            <span>{playlist.name}</span>
-          </div>
-        ))}
+  <div
+    key={playlist.id}
+    onClick={() => handlePlaylistSelection(playlist)}
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "10px",
+      margin: "10px",
+      cursor: "pointer",
+      backgroundColor: "#f9f9f9",
+      border: "1px solid #ddd",
+      borderRadius: "10px",
+      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+      width: "150px",
+    }}
+  >
+    <img
+      src={playlist.image}
+      alt={playlist.name}
+      style={{
+        width: "120px",
+        height: "120px",
+        borderRadius: "8px",
+        objectFit: "cover",
+        marginBottom: "8px",
+      }}
+    />
+    <span
+      style={{
+        fontSize: "14px",
+        color: "#333",
+        textAlign: "center",
+      }}
+    >
+      {playlist.name}
+    </span>
+  </div>
+))}
       </div>
       <button
         onClick={handleProceed}
