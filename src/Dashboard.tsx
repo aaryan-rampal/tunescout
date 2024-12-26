@@ -1,4 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
+} from "@mui/material";
 
 const Dashboard: React.FC = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
@@ -79,8 +88,8 @@ const Dashboard: React.FC = () => {
           return;
         }
 
-        const data = response.json();
-        setFilteredSongs(data); 
+        const data = await response.json();
+        setFilteredSongs(data);
         setShowResults(true); // Switch to results view
       } catch (error) {
         console.error("Error:", error);
@@ -98,65 +107,68 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>Select a Playlist</h1>
-      <div
-        style={{
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h4" gutterBottom>
+        Select a Playlist
+      </Typography>
+      <Box
+        sx={{
           maxHeight: "400px",
           overflowY: "scroll",
           border: "1px solid #ccc",
-          padding: "10px",
+          borderRadius: 2,
+          p: 2,
         }}
       >
         {playlists.map((playlist) => (
-  <div
-    key={playlist.id}
-    onClick={() => handlePlaylistSelection(playlist)}
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "10px",
-      margin: "10px",
-      cursor: "pointer",
-      backgroundColor: "#f9f9f9",
-      border: "1px solid #ddd",
-      borderRadius: "10px",
-      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-      width: "150px",
-    }}
-  >
-    <img
-      src={playlist.image}
-      alt={playlist.name}
-      style={{
-        width: "120px",
-        height: "120px",
-        borderRadius: "8px",
-        objectFit: "cover",
-        marginBottom: "8px",
-      }}
-    />
-    <span
-      style={{
-        fontSize: "14px",
-        color: "#333",
-        textAlign: "center",
-      }}
-    >
-      {playlist.name}
-    </span>
-  </div>
-))}
-      </div>
-      <button
+          <Card
+            key={playlist.id}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 2,
+              cursor: "pointer",
+              width: "150px",
+              mx: "auto",
+              boxShadow: 3,
+            }}
+          >
+            <CardActionArea onClick={() => handlePlaylistSelection(playlist)}>
+              <CardMedia
+                component="img"
+                height="120"
+                image={playlist.image}
+                alt={playlist.name}
+                sx={{
+                  borderRadius: 1,
+                  objectFit: "cover",
+                }}
+              />
+              <CardContent>
+                <Typography
+                  variant="body1"
+                  color="textPrimary"
+                  textAlign="center"
+                  fontFamily={"sans-serif"}
+                >
+                  <strong>{playlist.name}</strong>
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        ))}
+      </Box>
+      <Button
+        variant="contained"
+        color="primary"
         onClick={handleProceed}
-        style={{ marginTop: "10px", padding: "10px 20px", cursor: "pointer" }}
+        sx={{ mt: 2 }}
       >
         Proceed
-      </button>
-    </div>
+      </Button>
+    </Box>
   );
 };
 
