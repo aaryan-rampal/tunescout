@@ -1,12 +1,10 @@
 // server.js
-// import dotenv from "dotenv/config.js";
 import express from "express";
 import cors from "cors";
 import "./loadEnv.js";
 
-// dotenv.config();
 const app = express();
-const port = 3001; // You can choose a different port
+const port = 3001;
 const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
 app.use(express.json()); // To parse JSON request bodies
 app.use(cors());
@@ -42,8 +40,8 @@ app.post("/api/get_playlists", async (req, res) => {
     }
 
     const data = await response.json();
-    // console.log("Data:", data.items[0].images[0].url);
-    console.log("got here");
+    // TODO: why does this repeat twice?
+    // console.log("got here");
 
     // TODO: some playlists wont have images
     const playlists = data.items.map((playlist) => ({
@@ -61,7 +59,7 @@ app.post("/api/get_playlists", async (req, res) => {
 });
 
 async function fetchAllPlaylistTracks(playlist_id, access_token) {
-  const allTracks = []; // Array to store all tracks
+  const allTracks = [];
   let nextUrl = `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`;
 
   try {
@@ -88,20 +86,48 @@ async function fetchAllPlaylistTracks(playlist_id, access_token) {
       nextUrl = data.next; // `null` if no more pages
     }
 
-    // Extract relevant track information (optional)
+    // Extract relevant track information
     const trackDetails = allTracks.map((item) => ({
       name: item.track.name,
+      // TODO: this might be a problem later on
       artist: item.track.artists.map((artist) => artist.name).join(", "),
       album: item.track.album.name,
       id: item.track.id,
     }));
 
-    return trackDetails; // Return all tracks with relevant details
+    return trackDetails;
   } catch (error) {
     console.error("Error fetching playlist tracks:", error);
     throw error; // Rethrow to handle it in the calling function
   }
 }
+
+const removeInvalid = (similarTracks, ogTracks) => {
+  // Create a set of original playlist tracks
+  const ogTracksSet = new Set();
+  ogTracks.forEach((track) => {
+    const trackKey = `${track.name}|${track.artist}`;
+    ogTracksSet.add(trackKey);
+  });
+
+  const uniqueTracks = new Set();
+  const filteredTracks = similarTracks.filter((track) => {
+    const trackKey = `${track.name}|${track.artist.name}`;
+
+    // Check if the track already exists in the unique set or original playlist
+    if (uniqueTracks.has(trackKey) || ogTracksSet.has(trackKey)) {
+      return false;
+    }
+
+    // Add track to the unique set
+    uniqueTracks.add(trackKey);
+    return true;
+  });
+
+  return filteredTracks;
+};
+
+const minSimilarityScore = 0.85;
 
 app.post("/api/generate_playlist", async (req, res) => {
   const { playlist_id, access_token } = req.body;
@@ -112,31 +138,14 @@ app.post("/api/generate_playlist", async (req, res) => {
     return res.status(400).json({ message: "Playlist ID is required" });
   }
   try {
-    // const spotifyResponse = await fetch(
-    //   `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
-    //   {
-    //     method: "GET",
-    //     headers: {
-    //       Authorization: `Bearer ${access_token}`,
-    //     },
-    //   }
-    // );
-
-    // if (!spotifyResponse.ok) {
-    //   const error = await spotifyResponse.json();
-    //   return res
-    //     .status(spotifyResponse.status)
-    //     .json({ message: error.error.message });
-    // }
-
     const playlistData = await fetchAllPlaylistTracks(
       playlist_id,
       access_token
     );
 
-    // const playlistData = await spotifyResponse.json();
     const tracks = playlistData.map((item) => ({
       name: item.name,
+      // TODO: Make this more robust to multiple artists
       artist: item.artist, // Get the first artist
     }));
 
@@ -148,7 +157,6 @@ app.post("/api/generate_playlist", async (req, res) => {
 
     const allSimilarTracks = [];
 
-    // TODO: some similar tracks might be in the original playlist
     // Fetch similar tracks from Last.fm for each track
     const similarTracksPromises = tracks.map(async (track) => {
       const lastFmResponse = await fetch(
@@ -161,7 +169,7 @@ app.post("/api/generate_playlist", async (req, res) => {
 
       const similarData = await lastFmResponse.json();
       const filteredTracks = (similarData.similartracks?.track || []).filter(
-        (track) => parseFloat(track.match || 0) > 0.85
+        (track) => parseFloat(track.match || 0) > minSimilarityScore
       );
 
       allSimilarTracks.push(...filteredTracks);
@@ -169,23 +177,14 @@ app.post("/api/generate_playlist", async (req, res) => {
 
     // Wait for all similar track requests to complete
     await Promise.all(similarTracksPromises);
-    console.log(allSimilarTracks);
+    const filteredSimilarTracks = removeInvalid(allSimilarTracks, tracks);
+    console.log(filteredSimilarTracks);
 
-    const getRandomValuesFromList = (list, x) => {
-      // If the list length is less than x, return the entire list
-      if (list.length <= x) {
-        return list;
-      }
-
-      // Shuffle the list randomly
-      const shuffledList = list.sort(() => 0.5 - Math.random());
-
-      // Select the first x values
-      return shuffledList.slice(0, x);
-    };
-
-    const similarTracksResults = getRandomValuesFromList(allSimilarTracks, 10);
-    console.log(similarTracksResults);
+    // TODO: 10 is a random value here, make it a parameter
+    const similarTracksResults = getRandomValuesFromList(
+      filteredSimilarTracks,
+      10
+    );
 
     res.status(200).json(similarTracksResults);
   } catch (error) {
@@ -193,3 +192,13 @@ app.post("/api/generate_playlist", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+const getRandomValuesFromList = (list, x) => {
+  // If the list length is less than x, return the entire list
+  if (list.length <= x) {
+    return list;
+  }
+
+  const shuffledList = list.sort(() => 0.5 - Math.random());
+  return shuffledList.slice(0, x);
+};
