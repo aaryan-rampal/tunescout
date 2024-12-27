@@ -1,48 +1,34 @@
-// server.js
-import express from "express";
-import cors from "cors";
-import "./loadEnv.js";
-import Database from "better-sqlite3";
-// import { access } from "fs";
+import { Request, Response, Router } from "express";
+import "../loadEnv.js"
 
-const db = new Database("spotify_tokens.db")
-// Create the table if it doesn't exist
-db.exec(`
-  CREATE TABLE IF NOT EXISTS spotify_tokens (
-    user_id TEXT PRIMARY KEY,
-    access_token TEXT NOT NULL,
-    expires_at DATETIME NOT NULL
-  )
-`);
-
-const app = express();
-const port = 3001;
 const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
+export const spotifyRoutes = Router();
 
-app.use(express.json()); // To parse JSON request bodies
-app.use(cors());
+// Store access token
+spotifyRoutes.post(
+  "/store_access_token",
+  async (req: Request, res: Response) => {
+    const { access_token } = req.body;
 
-// Define routes
-app.get("/", (req, res) => {
-  res.send("Hello from Express!");
-});
+    if (!access_token) {
+      return res.status(400).json({ error: "Missing access_token" });
+    }
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-
-app.post("/api/store_access_token", async (req, res) => {
-  const { access_token } = req.body;
-
-  if (!access_token) {
-    return res.status(400).json({ message: "Access token is required" });
+    try {
+      // Store the token (replace with your logic)
+      console.log(`Access token received: ${access_token}`);
+      res.status(200).json({ message: "Access token stored successfully" });
+    } catch (error) {
+      console.error("Error storing access token:", error);
+      res.status(500).json({ error: "Failed to store access token" });
+    }
   }
+);
 
-  res.status(200).json({ message: "Access token stored" });
-})
+// Other Spotify-related endpoints can go here
 
-app.post("/api/get_playlists", async (req, res) => {
+spotifyRoutes.post("/get_playlists", async (req, res) => {
+  console.log("hello");
   const { access_token } = req.body;
 
   if (!access_token) {
@@ -164,7 +150,7 @@ const convertToSpotify = async (similarTracks) => {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "spotifyRouteslication/json",
           Authorization: `Bearer ${access_token}`,
         },
       });
@@ -205,7 +191,7 @@ const convertToSpotify = async (similarTracks) => {
   return spotifyTracks;
 };
 
-app.post("/api/generate_playlist", async (req, res) => {
+spotifyRoutes.post("/generate_playlist", async (req, res) => {
   const { playlist_id, access_token } = req.body;
   if (!access_token) {
     return res.status(400).json({ message: "Access token is required" });

@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/get_playlists", {
+      const response = await fetch("http://localhost:3001/spotify/get_playlists", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
       // console.log("Selected Playlist:", selectedPlaylist);
       try {
         const response = await fetch(
-          "http://localhost:3001/api/generate_playlist",
+          "http://localhost:3001/spotify/generate_playlist",
           {
             method: "POST",
             headers: {
@@ -167,7 +167,7 @@ const Dashboard: React.FC = () => {
       // console.log("Selected Playlist:", selectedPlaylist);
       try {
         const response = await fetch(
-          "http://localhost:3001/api/generate_playlist",
+          "http://localhost:3001/spotify/generate_playlist",
           {
             method: "POST",
             headers: {
