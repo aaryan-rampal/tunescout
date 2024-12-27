@@ -1,48 +1,59 @@
-import React from 'react';
+import React from "react";
+import { styled } from "@mui/system";
+import { Box, Typography, Button } from "@mui/material";
+import SpotifyLogo from "./spotify-logo.png";
 
 interface HomeProps {
   handleLogin: () => void;
 }
 
+// Styled Components
+const StyledContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100vh",
+  width: "100vw",
+  backgroundColor: "#1DB954", // Spotify green
+  margin: 0,
+  padding: 0,
+  overflow: "hidden",
+});
+
+const StyledHeading = styled(Typography)({
+  color: "black",
+  textAlign: "center",
+  marginBottom: "1rem",
+});
+
+const StyledButton = styled(Button)({
+  backgroundColor: "white",
+  color: "black",
+  borderRadius: "20px",
+  padding: "10px 20px",
+  fontSize: "16px",
+  textTransform: "none", // Disable uppercase text
+  "&:hover": {
+    backgroundColor: "#f0f0f0", // Slightly darker on hover
+  },
+});
+
 const Home: React.FC<HomeProps> = ({ handleLogin }) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      width: '100vw', // Ensure full width
-      backgroundColor: '#1DB954', // Spotify green background
-      margin: '0',
-      padding: '0',
-      overflow: 'hidden', // Ensure no black areas
-    }}
-  >
-    <h1 style={{ color: 'black', fontSize: '3rem', textAlign: 'center' }}>
+  <StyledContainer>
+    <StyledHeading variant="h3" component="h1">
       Ready to find your next favorite song?
-    </h1>
-    <button
-      style={{
-        marginTop: '20px',
-        padding: '10px 20px',
-        backgroundColor: 'white',
-        border: 'none',
-        borderRadius: '20px',
-        cursor: 'pointer',
-        fontSize: '16px',
-        color: '#000000',
-      }}
+    </StyledHeading>
+    <StyledButton
+      variant="contained"
       onClick={handleLogin}
+      startIcon={
+        <img src={SpotifyLogo} alt="Spotify Logo" style={{ height: "20px" }} />
+      }
     >
-      <img
-        src="spotify-logo.png"
-        alt="Spotify Logo"
-        style={{ height: '20px', marginRight: '10px' }}
-      />
       Log in with Spotify
-    </button>
-  </div>
+    </StyledButton>
+  </StyledContainer>
 );
 
 export default Home;
