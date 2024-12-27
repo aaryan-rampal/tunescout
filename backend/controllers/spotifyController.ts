@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import "../loadEnv.js"
+import "../loadEnv.js";
 
 const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
 export const spotifyRoutes = Router();
