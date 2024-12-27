@@ -7,12 +7,57 @@ import {
   CardActionArea,
   CardMedia,
   CardContent,
-  List,
   ListItem,
   ListItemAvatar,
   ListItemText,
   Avatar,
 } from "@mui/material";
+import { styled } from "@mui/system";
+
+const Container = styled(Box)({
+  padding: "16px",
+});
+
+const ScrollableBox = styled(Box)({
+  maxHeight: "400px",
+  overflowY: "scroll",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  padding: "16px",
+});
+
+const StyledCard = styled(Card)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: "16px",
+  cursor: "pointer",
+  width: "150px",
+  marginLeft: "auto",
+  marginRight: "auto",
+  boxShadow: "3px 3px 6px rgba(0, 0, 0, 0.1)",
+});
+
+const StyledCardMedia = styled(CardMedia)({
+  borderRadius: "8px",
+  objectFit: "cover",
+});
+
+const ButtonGroup = styled(Box)({
+  marginTop: "16px",
+  display: "flex",
+  gap: "16px",
+});
+
+const StyledListItem = styled(ListItem)({
+  marginBottom: "8px",
+});
+
+const StyledAvatar = styled(Avatar)({
+  width: "56px",
+  height: "56px",
+});
 
 const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true); // Track loading state
@@ -174,67 +219,38 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Container>
       {view === "selection" && (
         <>
           <Typography variant="h4" gutterBottom>
             Select a Playlist
           </Typography>
-          <Box
-            sx={{
-              maxHeight: "400px",
-              overflowY: "scroll",
-              border: "1px solid #ccc",
-              borderRadius: 2,
-              p: 2,
-            }}
-          >
+          <ScrollableBox>
             {playlists.map((playlist) => (
-              <Card
-                key={playlist.id}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  mb: 2,
-                  cursor: "pointer",
-                  width: "150px",
-                  mx: "auto",
-                  boxShadow: 3,
-                }}
-              >
+              <StyledCard key={playlist.id}>
                 <CardActionArea
                   onClick={() => handlePlaylistSelection(playlist)}
                 >
-                  <CardMedia
+                  <StyledCardMedia
                     component="img"
                     height="120"
                     image={playlist.image}
                     alt={playlist.name}
-                    sx={{
-                      borderRadius: 1,
-                      objectFit: "cover",
-                    }}
                   />
                   <CardContent>
-                    <Typography
-                      variant="body1"
-                      color="textPrimary"
-                      textAlign="center"
-                    >
+                    <Typography variant="body1" textAlign="center">
                       {playlist.name}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
-              </Card>
+              </StyledCard>
             ))}
-          </Box>
-          <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+          </ScrollableBox>
+          <ButtonGroup>
             <Button variant="contained" color="primary" onClick={handleProceed}>
-              Generate similar track
+              Generate similar tracks
             </Button>
-          </Box>
+          </ButtonGroup>
         </>
       )}
 
@@ -243,24 +259,11 @@ const Dashboard: React.FC = () => {
           <Typography variant="h4" gutterBottom>
             Recommended Playlist
           </Typography>
-          <List
-            sx={{
-              maxHeight: "400px",
-              overflowY: "scroll",
-              border: "1px solid #ccc",
-              borderRadius: 2,
-              p: 2,
-            }}
-          >
+          <ScrollableBox>
             {recommendedTracks.map((track) => (
-              <ListItem key={track.id} sx={{ mb: 1 }}>
+              <StyledListItem key={track.id}>
                 <ListItemAvatar>
-                  <Avatar
-                    src={track.image}
-                    alt={track.name}
-                    variant="square"
-                    sx={{ width: 56, height: 56 }}
-                  />
+                  <StyledAvatar src={track.image} alt={track.name} />
                 </ListItemAvatar>
                 <ListItemText
                   primary={track.name}
@@ -268,20 +271,20 @@ const Dashboard: React.FC = () => {
                     track.runtime
                   )}`}
                 />
-              </ListItem>
+              </StyledListItem>
             ))}
-          </List>
-          <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+          </ScrollableBox>
+          <ButtonGroup>
             <Button variant="contained" color="primary" onClick={handleRefresh}>
               Refresh Suggestions
             </Button>
             <Button variant="outlined" color="secondary" onClick={handleBack}>
               Back
             </Button>
-          </Box>
+          </ButtonGroup>
         </>
       )}
-    </Box>
+    </Container>
   );
 };
 
