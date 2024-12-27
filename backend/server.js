@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import "./loadEnv.js";
-import { access } from "fs";
+// import { access } from "fs";
 
 const app = express();
 const port = 3001;
@@ -21,6 +21,16 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+app.post("/api/store_access_token", async (req, res) => {
+  const { access_token } = req.body;
+
+  if (!access_token) {
+    return res.status(400).json({ message: "Access token is required" });
+  }
+
+  res.status(200).json({ message: "Access token stored" });
+})
 
 app.post("/api/get_playlists", async (req, res) => {
   const { access_token } = req.body;
