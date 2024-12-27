@@ -1,7 +1,7 @@
 import db from "./db";
 
 // Save tokens
-const saveTokens = (userId, accessToken, refreshToken, expiresAt) => {
+export const saveTokens = (userId, accessToken, refreshToken, expiresAt) => {
   const stmt = db.prepare(`
       INSERT OR REPLACE INTO spotify_tokens (user_id, access_token, refresh_token, expires_at)
       VALUES (?, ?, ?, ?)
@@ -10,7 +10,7 @@ const saveTokens = (userId, accessToken, refreshToken, expiresAt) => {
 };
 
 // Get tokens for a user
-const getTokens = (userId) => {
+export const getTokens = (userId) => {
   const stmt = db.prepare(`
       SELECT access_token, refresh_token, expires_at
       FROM spotify_tokens
@@ -20,17 +20,11 @@ const getTokens = (userId) => {
 };
 
 // Update access token
-const updateAccessToken = (userId, accessToken, expiresAt) => {
+export const updateAccessToken = (userId, accessToken, expiresAt) => {
   const stmt = db.prepare(`
       UPDATE spotify_tokens
       SET access_token = ?, expires_at = ?
       WHERE user_id = ?
     `);
   stmt.run(accessToken, expiresAt, userId);
-};
-
-module.exports = {
-  saveTokens,
-  getTokens,
-  updateAccessToken,
 };

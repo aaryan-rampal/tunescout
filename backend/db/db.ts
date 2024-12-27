@@ -12,4 +12,4 @@ db.exec(`
   )
 `);
 
-module.exports = db;
+export default db;
