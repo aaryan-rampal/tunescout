@@ -2,13 +2,23 @@
 import express from "express";
 import cors from "cors";
 import "./loadEnv.js";
+import Database from "better-sqlite3";
 // import { access } from "fs";
+
+const db = new Database("spotify_tokens.db")
+// Create the table if it doesn't exist
+db.exec(`
+  CREATE TABLE IF NOT EXISTS spotify_tokens (
+    user_id TEXT PRIMARY KEY,
+    access_token TEXT NOT NULL,
+    expires_at DATETIME NOT NULL
+  )
+`);
 
 const app = express();
 const port = 3001;
 const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
-const SPOTIFY_CLIENT_ID = process.env.VITE_SPOTIFY_CLIENT_ID;
-const SPOTIFY_CLIENT_SECRET = process.env.VITE_SPOTIFY_CLIENT_SECRET;
+
 app.use(express.json()); // To parse JSON request bodies
 app.use(cors());
 
