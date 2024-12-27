@@ -2,10 +2,13 @@
 import express from "express";
 import cors from "cors";
 import "./loadEnv.js";
+import { access } from "fs";
 
 const app = express();
 const port = 3001;
 const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
+const SPOTIFY_CLIENT_ID = process.env.VITE_SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.VITE_SPOTIFY_CLIENT_SECRET;
 app.use(express.json()); // To parse JSON request bodies
 app.use(cors());
 
@@ -129,6 +132,59 @@ const removeInvalid = (similarTracks, ogTracks) => {
 
 const minSimilarityScore = 0.85;
 
+const convertToSpotify = async (similarTracks) => {
+  const fetchSpotifyTrackId = async (trackName, artistName) => {
+    try {
+      const url = `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(
+        trackName
+      )}%20artist:${encodeURIComponent(artistName)}&type=track&limit=1`;
+
+      // TODO: need access token in the backend
+      const access_token = "";
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error(
+          `Failed to fetch track "${trackName}" by "${artistName}"`
+        );
+        console.error("Response status:", response.status);
+        return null;
+      }
+
+      const data = await response.json();
+      return data.tracks.items[0]?.id || null; // Return the Spotify ID
+    } catch (error) {
+      console.error("Error fetching Spotify track ID:", error);
+      return null;
+    }
+  };
+
+  const spotifyTrackPromises = similarTracks.map(async (track) => {
+    // const { name, artist } = track;
+    const name = track.name;
+    const artist = track.artist.name;
+    console.log(`Processing track: ${name} by ${artist}`);
+    const spotifyId = await fetchSpotifyTrackId(name, artist);
+    if (spotifyId) {
+      return { name, artist, spotifyId }; // Return the track object
+    } else {
+      console.warn(`No Spotify ID found for track: "${name}" by "${artist}"`);
+      return null; // Return null for tracks with no Spotify ID
+    }
+  });
+
+  const resolvedTracks = await Promise.all(spotifyTrackPromises);
+  console.log(resolvedTracks);
+  const spotifyTracks = resolvedTracks.filter((track) => track !== null);
+  return spotifyTracks;
+};
+
 app.post("/api/generate_playlist", async (req, res) => {
   const { playlist_id, access_token } = req.body;
   if (!access_token) {
@@ -179,12 +235,14 @@ app.post("/api/generate_playlist", async (req, res) => {
     await Promise.all(similarTracksPromises);
     const filteredSimilarTracks = removeInvalid(allSimilarTracks, tracks);
 
+    const spotifyTracks = await convertToSpotify(filteredSimilarTracks);
+
     // TODO: 10 is a random value here, make it a parameter
     const similarTracksResults = getRandomValuesFromList(
       filteredSimilarTracks,
       10
     );
-    console.log(similarTracksResults)
+    // console.log(similarTracksResults);
 
     res.status(200).json(similarTracksResults);
   } catch (error) {
