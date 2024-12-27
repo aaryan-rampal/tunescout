@@ -1,31 +1,52 @@
 import { Request, Response, Router } from "express";
 import "../loadEnv.js";
+import { saveTokens, getAllTokens } from "../db/spotifyTokens";
 
 const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
 export const spotifyRoutes = Router();
 
-// Store access token
-spotifyRoutes.post(
-  "/store_access_token",
-  async (req: Request, res: Response) => {
-    const { access_token } = req.body;
+// TODO: maybe save the token with some encryption later?
+spotifyRoutes.post("/save_token", async (req: Request, res: Response) => {
+  const { access_token, expires_in } = req.body;
 
-    if (!access_token) {
-      return res.status(400).json({ error: "Missing access_token" });
-    }
-
-    try {
-      // Store the token (replace with your logic)
-      console.log(`Access token received: ${access_token}`);
-      res.status(200).json({ message: "Access token stored successfully" });
-    } catch (error) {
-      console.error("Error storing access token:", error);
-      res.status(500).json({ error: "Failed to store access token" });
-    }
+  if (!access_token) {
+    return res.status(400).json({ error: "Missing authorization code" });
   }
-);
 
-// Other Spotify-related endpoints can go here
+  try {
+    // Calculate expiration time
+    const expiresAt = new Date(Date.now() + expires_in * 1000);
+
+    // Save tokens to your database (or memory)
+    // TODO: fix user ids here
+    const user_id = "dummy";
+    await saveTokens(user_id, access_token, expiresAt.toISOString());
+
+    // Respond with success
+    res.status(200).json({
+      message: "Authentication successful",
+    });
+  } catch (error) {
+    console.error(
+      "Error during token exchange:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({ error: "Failed to authenticate with Spotify" });
+  }
+});
+
+// spotifyRoutes.get("/tokens", async (req: Request, res: Response) => {
+//   try {
+//     // Query all tokens from the database
+//     const tokens = getAllTokens(); // Implement this function to fetch all rows
+
+//     // Send the tokens as a response
+//     res.status(200).json(tokens);
+//   } catch (error) {
+//     console.error("Error fetching tokens:", error.message);
+//     res.status(500).json({ error: "Failed to fetch tokens" });
+//   }
+// });
 
 spotifyRoutes.post("/get_playlists", async (req, res) => {
   console.log("hello");

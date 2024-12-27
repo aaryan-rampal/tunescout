@@ -11,6 +11,7 @@ app.use(cors());
 app.use("/spotify", spotifyRoutes);
 
 const port = process.env.PORT || 3001;
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
