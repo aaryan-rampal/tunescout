@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import SpotifyLogo from "../spotify-logo.png";
 import {
   Box,
   Typography,
@@ -60,6 +61,22 @@ const StyledAvatar = styled(Avatar)({
   height: "56px",
 });
 
+const SpotifyLink = styled("a")({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "32px",
+  height: "32px",
+  marginLeft: "16px",
+  backgroundColor: "#1db954", // Spotify green
+  borderRadius: "50%", // Circular background
+  cursor: "pointer",
+  textDecoration: "none",
+  "&:hover": {
+    backgroundColor: "#1aa34a", // Darker green on hover
+  },
+});
+
 const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true); // Track loading state
   const sentRequest = useRef(false); // Track if request has been sent
@@ -72,6 +89,8 @@ const Dashboard: React.FC = () => {
     "selection"
   ); // Toggle between views
 
+  const [numberOfRefreshes, setNumberOfRefreshes] = useState(0);
+
   const fetchPlaylists = async () => {
     if (sentRequest.current) return;
 
@@ -82,13 +101,16 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/spotify/get_playlists", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ access_token: accessToken }),
-      });
+      const response = await fetch(
+        "http://localhost:3001/spotify/get_playlists",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ access_token: accessToken }),
+        }
+      );
       sentRequest.current = true;
 
       if (!response.ok) {
@@ -118,6 +140,7 @@ const Dashboard: React.FC = () => {
 
   const handleProceed = async () => {
     const accessToken = localStorage.getItem("access_token");
+    setNumberOfRefreshes(0); // Reset refresh count
     if (selectedPlaylist) {
       // console.log("Selected Playlist:", selectedPlaylist);
       try {
@@ -131,6 +154,7 @@ const Dashboard: React.FC = () => {
             body: JSON.stringify({
               playlist_id: selectedPlaylist.id,
               access_token: accessToken,
+              number_of_refreshes: numberOfRefreshes,
             }),
           }
         );
@@ -161,8 +185,13 @@ const Dashboard: React.FC = () => {
 
   const handleRefresh = async () => {
     // Refresh recommendations for the current playlist
+    setNumberOfRefreshes((prev) => prev + 1);
     setIsLoading(true);
     const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+      console.error("No access token found");
+      return;
+    }
     if (selectedPlaylist) {
       // console.log("Selected Playlist:", selectedPlaylist);
       try {
@@ -176,6 +205,7 @@ const Dashboard: React.FC = () => {
             body: JSON.stringify({
               playlist_id: selectedPlaylist.id,
               access_token: accessToken,
+              number_of_refreshes: numberOfRefreshes,
             }),
           }
         );
@@ -207,6 +237,35 @@ const Dashboard: React.FC = () => {
     setView("selection");
     setSelectedPlaylist(null); // Reset selection
     setRecommendedTracks([]); // Clear recommendations
+  };
+
+  const handleCreate = async () => {
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+      console.error("No access token found");
+      return;
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3001/spotify/create_playlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            access_token: access_token,
+            tracks: recommendedTracks,
+            name: `${selectedPlaylist.name} vibes`,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log("Playlist created:", data);
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+    }
   };
 
   const formatDuration = (ms: number) => {
@@ -260,7 +319,7 @@ const Dashboard: React.FC = () => {
           <Typography variant="h4" gutterBottom>
             Recommended Playlist
           </Typography>
-          <ScrollableBox>
+          {/* <ScrollableBox>
             {recommendedTracks.map((track) => (
               <StyledListItem key={track.id}>
                 <ListItemAvatar>
@@ -268,19 +327,40 @@ const Dashboard: React.FC = () => {
                 </ListItemAvatar>
                 <ListItemText
                   primary={track.name}
-                  secondary={`${track.artists} • ${formatDuration(
+                  secondary={`${track.artist} • ${formatDuration(
                     track.runtime
                   )}`}
                 />
               </StyledListItem>
             ))}
           </ScrollableBox>
+          <ScrollableBox> */}
+          {recommendedTracks.map((track) => (
+            <StyledListItem key={track.id}>
+              <ListItemAvatar>
+                <StyledAvatar src={track.image} alt={track.name} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={track.name}
+                secondary={`${track.artist} • ${formatDuration(track.runtime)}`}
+              />
+              <SpotifyLink
+                href={track.uri}
+                target="_blank"
+                rel="noopener noreferrer"
+              ></SpotifyLink>
+            </StyledListItem>
+          ))}
+          {/* </ScrollableBox> */}
           <ButtonGroup>
             <Button variant="contained" color="primary" onClick={handleRefresh}>
               Refresh Suggestions
             </Button>
             <Button variant="outlined" color="secondary" onClick={handleBack}>
               Back
+            </Button>
+            <Button variant="contained" color="primary" onClick={handleCreate}>
+              Create Playlist
             </Button>
           </ButtonGroup>
         </>

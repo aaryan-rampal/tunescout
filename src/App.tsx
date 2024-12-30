@@ -10,7 +10,12 @@ const App = () => {
   useEffect(() => {
     const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
     const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
-    const SCOPES = ["playlist-read-private", "playlist-read-collaborative"];
+    const SCOPES = [
+      "playlist-read-private",
+      "playlist-read-collaborative",
+      "playlist-modify-private",
+      "playlist-modify-public",
+    ];
 
     const authEndpoint =
       `https://accounts.spotify.com/authorize?` +
