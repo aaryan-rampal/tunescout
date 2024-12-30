@@ -24,15 +24,8 @@ const Callback = () => {
 
       window.location.hash = ""; // Clears the URL fragment
       tokenProcessedRef.current = true;
-      // console.log(token)
-      fetch("http://localhost:3001/spotify/save_token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ access_token: token, expires_in: expires_in }),
-      });
-      // localStorage.setItem("access_token", token);
+      console.log(token)
+      localStorage.setItem("access_token", token);
       navigate("/dashboard");
     } else {
       console.log("Invalid response from Spotify");

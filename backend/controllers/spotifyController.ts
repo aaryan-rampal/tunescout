@@ -1,52 +1,8 @@
 import { Request, Response, Router } from "express";
 import "../loadEnv.js";
-import { saveTokens, getAllTokens } from "../db/spotifyTokens";
 
 const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
 export const spotifyRoutes = Router();
-
-// TODO: maybe save the token with some encryption later?
-spotifyRoutes.post("/save_token", async (req: Request, res: Response) => {
-  const { access_token, expires_in } = req.body;
-
-  if (!access_token) {
-    return res.status(400).json({ error: "Missing authorization code" });
-  }
-
-  try {
-    // Calculate expiration time
-    const expiresAt = new Date(Date.now() + expires_in * 1000);
-
-    // Save tokens to your database (or memory)
-    // TODO: fix user ids here
-    const user_id = "dummy";
-    await saveTokens(user_id, access_token, expiresAt.toISOString());
-
-    // Respond with success
-    res.status(200).json({
-      message: "Authentication successful",
-    });
-  } catch (error) {
-    console.error(
-      "Error during token exchange:",
-      error.response?.data || error.message
-    );
-    res.status(500).json({ error: "Failed to authenticate with Spotify" });
-  }
-});
-
-// spotifyRoutes.get("/tokens", async (req: Request, res: Response) => {
-//   try {
-//     // Query all tokens from the database
-//     const tokens = getAllTokens(); // Implement this function to fetch all rows
-
-//     // Send the tokens as a response
-//     res.status(200).json(tokens);
-//   } catch (error) {
-//     console.error("Error fetching tokens:", error.message);
-//     res.status(500).json({ error: "Failed to fetch tokens" });
-//   }
-// });
 
 spotifyRoutes.post("/get_playlists", async (req, res) => {
   console.log("hello");
@@ -159,15 +115,13 @@ const removeInvalid = (similarTracks, ogTracks) => {
 
 const minSimilarityScore = 0.85;
 
-const convertToSpotify = async (similarTracks) => {
+const convertToSpotify = async (similarTracks, access_token) => {
   const fetchSpotifyTrackId = async (trackName, artistName) => {
     try {
       const url = `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(
         trackName
       )}%20artist:${encodeURIComponent(artistName)}&type=track&limit=1`;
 
-      // TODO: need access token in the backend
-      const access_token = "";
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -207,7 +161,7 @@ const convertToSpotify = async (similarTracks) => {
   });
 
   const resolvedTracks = await Promise.all(spotifyTrackPromises);
-  console.log(resolvedTracks);
+  // console.log(resolvedTracks);
   const spotifyTracks = resolvedTracks.filter((track) => track !== null);
   return spotifyTracks;
 };
@@ -262,7 +216,12 @@ spotifyRoutes.post("/generate_playlist", async (req, res) => {
     await Promise.all(similarTracksPromises);
     const filteredSimilarTracks = removeInvalid(allSimilarTracks, tracks);
 
-    const spotifyTracks = await convertToSpotify(filteredSimilarTracks);
+    const spotifyTracks = await convertToSpotify(
+      filteredSimilarTracks,
+      access_token
+    );
+
+    // console.log(spotifyTracks)
 
     // TODO: 10 is a random value here, make it a parameter
     const similarTracksResults = getRandomValuesFromList(
