@@ -24,6 +24,7 @@ const Callback = () => {
 
       window.location.hash = ""; // Clears the URL fragment
       tokenProcessedRef.current = true;
+      // console.log(token)
       fetch("http://localhost:3001/spotify/save_token", {
         method: "POST",
         headers: {
