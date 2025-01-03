@@ -8,12 +8,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import spotifyLogo from "../assets/spotify-logo.png";
-import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [authUrl, setAuthUrl] = useState("");
-
-  useEffect(() => {
+  const handleLogin = () => {
     const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
     const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
     const SCOPES = [
@@ -30,13 +27,8 @@ export default function Home() {
       `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
       `&scope=${encodeURIComponent(SCOPES.join(" "))}`;
 
-    setAuthUrl(authEndpoint);
-  }, []);
-
-  const handleLogin = () => {
-    if (authUrl) {
-      console.log(authUrl);
-      window.location.href = authUrl;
+    if (authEndpoint) {
+      window.location.href = authEndpoint;
     }
   };
 
@@ -62,7 +54,6 @@ export default function Home() {
       >
         <Button
           variant="solid"
-          //   colorScheme="teal"
           size="lg"
           borderRadius="8px"
           boxShadow="lg"

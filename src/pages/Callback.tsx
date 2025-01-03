@@ -1,5 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-import exp from "constants";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -24,10 +22,11 @@ const Callback = () => {
 
       window.location.hash = ""; // Clears the URL fragment
       tokenProcessedRef.current = true;
-      console.log(token)
+      console.log(token);
       localStorage.setItem("access_token", token);
       navigate("/dashboard");
     } else {
+      // TODO: Handle error better
       console.log("Invalid response from Spotify");
     }
   }, [navigate]);
