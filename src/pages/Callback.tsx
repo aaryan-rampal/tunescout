@@ -18,7 +18,7 @@ const Callback = () => {
 
     if (tokenMatch && expiresMatch) {
       const token = tokenMatch[1];
-      const expires_in = expiresMatch[1];
+      // const expires_in = expiresMatch[1];
 
       window.location.hash = ""; // Clears the URL fragment
       tokenProcessedRef.current = true;
