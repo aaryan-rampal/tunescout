@@ -25,7 +25,7 @@ const PlaylistList: React.FC<PlaylistListProps> = ({
 
   return (
     <Box
-      maxH="75vh"
+      maxH="65vh"
       overflowY="auto"
       border="1px solid #ccc"
       borderRadius="md"

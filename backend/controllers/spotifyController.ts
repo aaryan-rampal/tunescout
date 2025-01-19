@@ -174,7 +174,8 @@ const convertToSpotify = async (similarTracks, access_token) => {
 };
 
 spotifyRoutes.post("/generate_playlist", async (req, res) => {
-  const { playlist_id, access_token, number_of_refreshes } = req.body;
+  const { playlist_id, access_token, number_of_refreshes, number_of_songs } =
+    req.body;
   if (!access_token) {
     return res.status(400).json({ message: "Access token is required" });
   }
@@ -234,8 +235,10 @@ spotifyRoutes.post("/generate_playlist", async (req, res) => {
 
     // console.log(spotifyTracks)
 
-    // TODO: 10 is a random value here, make it a parameter
-    const similarTracksResults = getRandomValuesFromList(spotifyTracks, 10);
+    const similarTracksResults = getRandomValuesFromList(
+      spotifyTracks,
+      number_of_songs
+    );
     // console.log(similarTracksResults);
 
     res.status(200).json(similarTracksResults);
