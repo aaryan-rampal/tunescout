@@ -40,9 +40,9 @@ const Dashboard: React.FC = () => {
     isPending: generating,
   } = useMutation({
     mutationFn: () =>
-      // TODO this doesn't actually update number of refreshes
       generatePlaylist(selectedPlaylist!.id, accessToken!, numberOfRefreshes),
     onSuccess: () => {
+      setNumberOfRefreshes(numberOfRefreshes + 1);
       setView("generated");
     },
   });
