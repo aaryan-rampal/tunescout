@@ -72,15 +72,13 @@ const Dashboard: React.FC = () => {
               playlists={playlists}
               setSelectedPlaylist={setSelectedPlaylist}
             />
-            {selectedPlaylist && (
-              <Button
-                onClick={() => generate()}
-                isLoading={generating}
-                colorScheme="blue"
-              >
-                Generate Recommendations
-              </Button>
-            )}
+            <Button
+              onClick={() => generate()}
+              isLoading={generating}
+              colorScheme="blue"
+            >
+              Generate Recommendations
+            </Button>
           </>
         ) : (
           <>
