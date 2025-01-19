@@ -47,7 +47,7 @@ const PlaylistList: React.FC<PlaylistListProps> = ({
             <HStack>
               <Avatar
                 src={playlist.image}
-                alt={playlist.name}
+                name={playlist.name}
                 boxSize="96px"
                 borderRadius="8px"
               />

@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
     mutationFn: () =>
       // TODO this doesn't actually update number of refreshes
       generatePlaylist(selectedPlaylist!.id, accessToken!, numberOfRefreshes),
-    onSuccess: (data) => {
+    onSuccess: () => {
       setView("generated");
     },
   });
@@ -90,7 +90,13 @@ const Dashboard: React.FC = () => {
               <Button onClick={() => setView("all")} colorScheme="gray">
                 Back
               </Button>
-              <Button colorScheme="green">Create Playlist</Button>
+              <Button
+                colorScheme="green"
+                onClick={() => create()}
+                isLoading={creating}
+              >
+                Create Playlist
+              </Button>
             </HStack>
           </>
         )}
