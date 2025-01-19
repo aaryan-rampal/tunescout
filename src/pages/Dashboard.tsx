@@ -9,13 +9,9 @@ import {
   Box,
   Heading,
   Button,
-  List,
-  ListItem,
-  Avatar,
   Text,
   VStack,
   HStack,
-  Spinner,
   Slider,
   SliderTrack,
   SliderFilledTrack,
@@ -74,8 +70,8 @@ const Dashboard: React.FC = () => {
       // console.log(data);
       const spotifyEmbedUrl = `https://open.spotify.com/embed/playlist/${data.playlistId}`; // ✅ Convert ID to URL
       setSpotifyPlaylistUrl(spotifyEmbedUrl);
-      console.log(spotifyEmbedUrl)
-      setView("done")
+      console.log(spotifyEmbedUrl);
+      setView("done");
     },
   });
 
@@ -157,9 +153,8 @@ const Dashboard: React.FC = () => {
                 src={spotifyPlaylistUrl}
                 width="100%"
                 // height="700"
-                frameBorder="0"
                 allow="encrypted-media"
-                title={`Spotify Playlist ${spotifyPlaylistUrl}`} 
+                title={`Spotify Playlist ${spotifyPlaylistUrl}`}
               />
             </Box>
             <Button onClick={() => setView("all")} colorScheme="blue">

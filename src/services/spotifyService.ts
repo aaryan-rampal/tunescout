@@ -16,7 +16,7 @@ export const generatePlaylist = async (
     playlist_id: playlistId,
     access_token: accessToken,
     number_of_refreshes: numberOfRefreshes,
-    number_of_songs: numSongs
+    number_of_songs: numSongs,
   });
 };
 
