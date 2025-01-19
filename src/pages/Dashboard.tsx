@@ -17,8 +17,10 @@ import {
   HStack,
   Spinner,
 } from "@chakra-ui/react";
+import PlaylistList from "./PlayList";
 
 const Dashboard: React.FC = () => {
+  const [view, setView] = useState<"all" | "generated">("all");
   const [selectedPlaylist, setSelectedPlaylist] = useState<any | null>(null);
   const [numberOfRefreshes, setNumberOfRefreshes] = useState(0);
   const accessToken = localStorage.getItem("access_token");
@@ -38,7 +40,11 @@ const Dashboard: React.FC = () => {
     isPending: generating,
   } = useMutation({
     mutationFn: () =>
+      // TODO this doesn't actually update number of refreshes
       generatePlaylist(selectedPlaylist!.id, accessToken!, numberOfRefreshes),
+    onSuccess: (data) => {
+      setView("generated");
+    },
   });
 
   // Create Playlist
@@ -54,85 +60,43 @@ const Dashboard: React.FC = () => {
   if (playlistsLoading) return <div>Loading playlists...</div>;
 
   return (
-    <Box p={8}>
-      {!selectedPlaylist ? (
-        <VStack spacing={6} align="stretch">
-          <Heading as="h2" size="lg">
-            Select a Playlist
-          </Heading>
-          <List spacing={4}>
-            {playlists?.map((playlist) => (
-              <ListItem
-                key={playlist.id}
-                p={3}
-                borderRadius="md"
-                borderWidth="1px"
-                cursor="pointer"
-                _hover={{ bg: "gray.100" }}
-                onClick={() => setSelectedPlaylist(playlist)}
-              >
-                <HStack>
-                  <Avatar src={playlist.image} alt={playlist.name} />
-                  <Text fontWeight="bold">{playlist.name}</Text>
-                </HStack>
-              </ListItem>
-            ))}
-          </List>
-        </VStack>
-      ) : (
-        <VStack spacing={6} align="stretch">
-          <Heading as="h2" size="lg">
-            Generating Recommendations...
-          </Heading>
-          <HStack>
-            <Button
-              onClick={() => generate()}
-              isLoading={generating}
-              colorScheme="blue"
-            >
-              Generate Recommendations
-            </Button>
-            <Button
-              onClick={() => setSelectedPlaylist(null)}
-              colorScheme="gray"
-            >
-              Back
-            </Button>
-          </HStack>
+    <Box p={8} h="100vh">
+      <VStack spacing={6} align="stretch">
+        <Heading as="h2" size="lg">
+          {view === "all" ? "Select a Playlist" : "Generated Playlist"}
+        </Heading>
 
-          {recommendedTracks && (
-            <VStack spacing={4} align="stretch">
-              <List spacing={4}>
-                {recommendedTracks.map((track) => (
-                  <ListItem
-                    key={track.id}
-                    p={3}
-                    borderRadius="md"
-                    borderWidth="1px"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Avatar src={track.image} alt={track.name} mr={3} />
-                    <Box>
-                      <Text fontWeight="bold">{track.name}</Text>
-                      <Text fontSize="sm" color="gray.500">
-                        {track.artist}
-                      </Text>
-                    </Box>
-                  </ListItem>
-                ))}
-              </List>
+        {view === "all" ? (
+          <>
+            <PlaylistList
+              playlists={playlists}
+              setSelectedPlaylist={setSelectedPlaylist}
+            />
+            {selectedPlaylist && (
               <Button
-                onClick={() => create()}
-                isLoading={creating}
-                colorScheme="green"
+                onClick={() => generate()}
+                isLoading={generating}
+                colorScheme="blue"
               >
-                Create Playlist
+                Generate Recommendations
               </Button>
-            </VStack>
-          )}
-        </VStack>
-      )}
+            )}
+          </>
+        ) : (
+          <>
+            <PlaylistList
+              playlists={recommendedTracks}
+              setSelectedPlaylist={setSelectedPlaylist}
+            />
+            <HStack>
+              <Button onClick={() => setView("all")} colorScheme="gray">
+                Back
+              </Button>
+              <Button colorScheme="green">Create Playlist</Button>
+            </HStack>
+          </>
+        )}
+      </VStack>
     </Box>
   );
 };
