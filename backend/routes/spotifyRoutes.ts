@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { handleAuthCallback } from "../controllers/spotifyController";
+import * as spotifyController from "../controllers/spotifyController";
+// import { handleAuthCallback } from "../controllers/spotifyController";
 
-const router = Router();
+export const spotifyRoutes = Router()
 
-// Spotify authentication callback route
-router.post("/auth/callback", handleAuthCallback);
-
-export default router;
+spotifyRoutes.post("/get_playlists", spotifyController.getUserPlaylists);
+spotifyRoutes.post("/generate_playlist", spotifyController.generatePlaylist);
+spotifyRoutes.post("/create_playlist", spotifyController.createPlaylist);

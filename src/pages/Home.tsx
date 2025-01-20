@@ -14,7 +14,7 @@ export default function Home() {
     const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
     const REDIRECT_URI =
       import.meta.env.MODE === "development"
-        ? "http://localhost:5173/callback"
+        ? "http://localhost:5173/tunescout/callback"
         : "https://aaryan-rampal.github.io/tunescout/callback";
 
     // const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;

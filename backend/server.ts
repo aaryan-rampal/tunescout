@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import "./loadEnv.js";
-import { spotifyRoutes } from "./controllers/spotifyController.ts";
+import { spotifyRoutes } from "./routes/spotifyRoutes";
 
 const app = express();
 app.use(express.json()); // To parse JSON request bodies
