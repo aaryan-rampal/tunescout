@@ -45,7 +45,6 @@ const Dashboard: React.FC = () => {
     isPending: generating,
   } = useMutation({
     mutationFn: () =>
-      // TODO: set Numberofsongs here
       generatePlaylist(
         selectedPlaylist!.id,
         accessToken!,
@@ -92,7 +91,7 @@ const Dashboard: React.FC = () => {
         {view === "all" && (
           <>
             <PlaylistList
-              playlists={playlists}
+              playlists={playlists || []}
               setSelectedPlaylist={setSelectedPlaylist}
             />
             <Box>
@@ -124,12 +123,20 @@ const Dashboard: React.FC = () => {
         {view === "generated" && (
           <>
             <PlaylistList
-              playlists={recommendedTracks}
-              setSelectedPlaylist={setSelectedPlaylist}
+              playlists={recommendedTracks || []}
+              setSelectedPlaylist={() => {}}
             />
             <HStack>
               <Button onClick={() => setView("all")} colorScheme="gray">
                 Back
+              </Button>
+              {/* TODO: if you click generate too much server throws error */}
+              <Button
+                onClick={() => generate()}
+                isLoading={generating}
+                colorScheme="blue"
+              >
+                Regenerate Recommendations
               </Button>
               <Button
                 onClick={() => create()}
