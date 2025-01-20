@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 .env
-spotify_tokens.db
+backend/prisma/migrations/*
+backend/prisma/migrations/database.sqlite
