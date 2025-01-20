@@ -17,11 +17,14 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from "@chakra-ui/react";
-import PlaylistList from "./PlayList";
+import PlaylistList from "../components/PlayList";
+import TrackList from "../components/TrackList";
 
 const Dashboard: React.FC = () => {
   const [view, setView] = useState<"all" | "generated" | "done">("all");
   const [selectedPlaylist, setSelectedPlaylist] = useState<any | null>(null);
+  const [selectedPlaylistName, setSelectedPlaylistName] = useState<any | null>(null);
+  const [totalRuntime, setTotalRuntime] = useState<any | null>(null);
   const [numberOfRefreshes, setNumberOfRefreshes] = useState(0);
   const [numSongs, setNumSongs] = useState(10);
   const [spotifyPlaylistUrl, setSpotifyPlaylistUrl] = useState<string | null>(
@@ -38,6 +41,21 @@ const Dashboard: React.FC = () => {
 
   console.log(playlists);
 
+  const formatTotalRuntime = (recommendedTracks: { runtime: number }[]): string => {
+    if (!recommendedTracks || recommendedTracks.length === 0) return "0m";
+  
+    const totalMs = recommendedTracks.reduce((sum, track) => sum + track.runtime, 0);
+    const totalMinutes = Math.floor(totalMs / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+  
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
+
+
   // Generate Recommendations
   const {
     data: recommendedTracks,
@@ -51,8 +69,12 @@ const Dashboard: React.FC = () => {
         numberOfRefreshes,
         numSongs
       ),
-    onSuccess: () => {
+    onSuccess: (data) => {
       setNumberOfRefreshes(numberOfRefreshes + 1);
+      setSelectedPlaylistName(selectedPlaylist.name)
+      if (data) {
+        setTotalRuntime(formatTotalRuntime(data));
+      }
       setView("generated");
     },
   });
@@ -66,10 +88,8 @@ const Dashboard: React.FC = () => {
         `${selectedPlaylist?.name} vibes`
       ),
     onSuccess: (data) => {
-      // console.log(data);
       const spotifyEmbedUrl = `https://open.spotify.com/embed/playlist/${data.playlistId}`; // ✅ Convert ID to URL
       setSpotifyPlaylistUrl(spotifyEmbedUrl);
-      console.log(spotifyEmbedUrl);
       setView("done");
     },
   });
@@ -83,7 +103,7 @@ const Dashboard: React.FC = () => {
           {view === "all"
             ? "Select a Playlist"
             : view === "generated"
-            ? "Generated Playlist"
+            ? `Potential vibes for ${selectedPlaylistName} (${totalRuntime})`
             : ""}
         </Heading>
 
@@ -122,10 +142,11 @@ const Dashboard: React.FC = () => {
         {/* ✅ "Generated Recommendations" View */}
         {view === "generated" && (
           <>
-            <PlaylistList
+            {/* <PlaylistList
               playlists={recommendedTracks || []}
               setSelectedPlaylist={() => {}}
-            />
+            /> */}
+            <TrackList tracks={recommendedTracks || []}></TrackList>
             <HStack>
               <Button onClick={() => setView("all")} colorScheme="gray">
                 Back
