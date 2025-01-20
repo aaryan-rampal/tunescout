@@ -12,7 +12,12 @@ import spotifyLogo from "../assets/spotify-logo.png";
 export default function Home() {
   const handleLogin = () => {
     const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-    const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+    const REDIRECT_URI =
+      import.meta.env.MODE === "development"
+        ? "http://localhost:5173/callback"
+        : "https://aaryan-rampal.github.io/tunescout/callback";
+
+    // const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
     const SCOPES = [
       "playlist-read-private",
       "playlist-read-collaborative",
