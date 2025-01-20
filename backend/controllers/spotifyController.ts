@@ -1,9 +1,7 @@
-import { Request, Response, Router } from "express";
+import { Request, Response } from "express";
 import * as spotifyService from "../services/spotifyService";
 import "../loadEnv.js";
-import { Track } from "../types";
-
-const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
+import { Track } from "../types.js";
 
 // ✅ Get user playlists
 export const getUserPlaylists = async (req: Request, res: Response) => {
@@ -33,8 +31,11 @@ export const generatePlaylist = async (req: Request, res: Response) => {
     if (originalTracks.length < 10)
       throw new Error("Playlist does not have enough tracks");
 
-    // TODO: sometimes, similarTracks.length < number_of_songs
-    const similarTracks: Track[] = await spotifyService.fetchEnoughSimilarTracks(originalTracks, number_of_songs);
+    const similarTracks: Track[] =
+      await spotifyService.fetchEnoughSimilarTracks(
+        originalTracks,
+        number_of_songs
+      );
     const removeTracks = getRandomValuesFromList(
       similarTracks,
       number_of_songs
