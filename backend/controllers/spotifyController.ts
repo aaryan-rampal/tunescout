@@ -339,7 +339,8 @@ const LASTFM_API_KEY = process.env.VITE_LASTFM_API_KEY;
 export const getUserPlaylists = async (req: Request, res: Response) => {
   try {
     const { access_token } = req.body;
-    if (!access_token) return res.status(400).json({ message: "Access token is required" });
+    if (!access_token)
+      return res.status(400).json({ message: "Access token is required" });
 
     const playlists = await spotifyService.getUserPlaylists(access_token);
     res.status(200).json(playlists);
@@ -352,14 +353,22 @@ export const getUserPlaylists = async (req: Request, res: Response) => {
 export const generatePlaylist = async (req: Request, res: Response) => {
   try {
     const { playlist_id, access_token, number_of_songs } = req.body;
-    if (!access_token || !playlist_id) throw new Error("Missing required fields");
+    if (!access_token || !playlist_id)
+      throw new Error("Missing required fields");
 
-    const originalTracks = await spotifyService.fetchAllPlaylistTracks(playlist_id, access_token);
-    if (originalTracks.length < 10) throw new Error("Playlist does not have enough tracks");
+    const originalTracks = await spotifyService.fetchAllPlaylistTracks(
+      playlist_id,
+      access_token
+    );
+    if (originalTracks.length < 10)
+      throw new Error("Playlist does not have enough tracks");
 
     const similarTracks = await fetchSimilarTracks(originalTracks);
-    const spotifyTracks = await convertToSpotify(similarTracks, access_token);
-    const finalTracks = getRandomValuesFromList(spotifyTracks, number_of_songs);
+    const removeTracks = getRandomValuesFromList(
+      similarTracks,
+      number_of_songs
+    );
+    const finalTracks = await convertToSpotify(removeTracks, access_token);
 
     res.status(200).json(finalTracks);
   } catch (error) {
@@ -371,12 +380,25 @@ export const generatePlaylist = async (req: Request, res: Response) => {
 export const createPlaylist = async (req: Request, res: Response) => {
   try {
     const { access_token, tracks, name } = req.body;
-    if (!access_token || !tracks || !name) throw new Error("Missing required fields");
+    if (!access_token || !tracks || !name)
+      throw new Error("Missing required fields");
 
-    const playlistData = await spotifyService.createPlaylist(name, access_token);
-    await spotifyService.addTracksToPlaylist(playlistData.id, tracks.map((track) => track.uri), access_token);
+    const playlistData = await spotifyService.createPlaylist(
+      name,
+      access_token
+    );
+    await spotifyService.addTracksToPlaylist(
+      playlistData.id,
+      tracks.map((track) => track.uri),
+      access_token
+    );
 
-    res.status(200).json({ message: "Playlist created successfully", playlistId: playlistData.id });
+    res
+      .status(200)
+      .json({
+        message: "Playlist created successfully",
+        playlistId: playlistData.id,
+      });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -392,7 +414,9 @@ const fetchSimilarTracks = async (tracks) => {
       const response = await fetch(
         `http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=${encodeURIComponent(
           track.artist
-        )}&track=${encodeURIComponent(track.name)}&api_key=${LASTFM_API_KEY}&format=json`
+        )}&track=${encodeURIComponent(
+          track.name
+        )}&api_key=${LASTFM_API_KEY}&format=json`
       );
 
       const data = await response.json();
@@ -405,7 +429,11 @@ const fetchSimilarTracks = async (tracks) => {
 
 const convertToSpotify = async (similarTracks, access_token) => {
   const spotifyTrackPromises = similarTracks.map(async (track) => {
-    return await spotifyService.fetchSpotifyTrackId(track.name, track.artist.name, access_token);
+    return await spotifyService.fetchSpotifyTrackId(
+      track.name,
+      track.artist.name,
+      access_token
+    );
   });
 
   const resolvedTracks = await Promise.all(spotifyTrackPromises);
@@ -413,5 +441,7 @@ const convertToSpotify = async (similarTracks, access_token) => {
 };
 
 const getRandomValuesFromList = (list, x) => {
-  return list.length <= x ? list : list.sort(() => 0.5 - Math.random()).slice(0, x);
+  return list.length <= x
+    ? list
+    : list.sort(() => 0.5 - Math.random()).slice(0, x);
 };
