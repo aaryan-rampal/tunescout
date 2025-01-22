@@ -28,6 +28,7 @@ This project aims to create a music recommender bot that provides personalized m
 
    Enjoy! 🎶
 
-**Demo Video:**
+**Demo Video:** 
 
+Please click the image to view the full demo
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Zsazn-n3pHo/0.jpg)](https://www.youtube.com/watch?v=Zsazn-n3pHo)
