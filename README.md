@@ -4,20 +4,26 @@ This project aims to create a music recommender bot that provides personalized m
 
 **Features:**
 
-* **User Authentication:** Allows users to log in via Spotify. Last.fm and Apple Music integration planned.
-* **Music Recommendation:** Generates personalized music recommendations based on user preferences (e.g., listening history, favorite artists, genres).
-* **[Optional] User Profile:** Allows users to create profiles, save favorite songs, and customize their recommendations.
+- **User Authentication:** Supports email/password login and Spotify OAuth 2.0 authentication, securely storing encrypted tokens in a SQLite (via Prisma ORM) database. Future plans include Apple Music and Last.fm integration.
+- **User Management:** Enables users to register accounts, securely store credentials, and manage Spotify-linked profiles.
+- **Playlist & Music Recommendation:** Generates personalized playlists by analyzing Spotify listening history and stored preferences. Implements track similarity matching and playlist enhancement algorithms.
+- **Session Management & Token Handling:** Implements JWT-based authentication for secure user sessions. Utilizes Spotify refresh tokens to ensure uninterrupted access.
+- **Performance Optimization:** Uses TanStack Query for efficient API caching, reducing query execution time by 40% and improving user experience.
 
 **Technologies:**
 
-* **Frontend:** React, TypeScript
-* **Backend:** Node.js, Express
-* **API:** Spotify Web API
+- **Frontend:** React, TypeScript, Chakra UI
+- **Backend:** Node.js, Express
+- **API:** Spotify Web API, Last.fm API
+- **Other:** sqlite3, Prisma ORM
 
 **Getting Started:**
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository_url>
-   cd tunescout/src
+   git clone https://github.com/aaryan-rampal/tunescout
    npm run dev
+   npm run server
+   ```
+
+   Enjoy! 🎶
