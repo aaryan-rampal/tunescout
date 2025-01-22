@@ -21,7 +21,9 @@ This project aims to create a music recommender bot that provides personalized m
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository_url>
-   cd tunescout/src
+   git clone https://github.com/aaryan-rampal/tunescout
    npm run dev
+   npm run server
    ```
+
+   Enjoy! 🎶
