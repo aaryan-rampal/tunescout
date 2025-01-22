@@ -21,7 +21,6 @@ const SCOPES = [
 ];
 
 export const loginWithSpotify = (req: Request, res: Response) => {
-  console.log(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
   const authURL = `${SPOTIFY_AUTH_URL}?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
   )}&scope=${encodeURIComponent(SCOPES.join(" "))}`;
