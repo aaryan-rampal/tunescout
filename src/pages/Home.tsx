@@ -11,30 +11,31 @@ import spotifyLogo from "../assets/spotify-logo.png";
 
 export default function Home() {
   const handleLogin = () => {
-    const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-    const REDIRECT_URI =
-      import.meta.env.MODE === "development"
-        ? "http://localhost:5173/tunescout/callback"
-        : "https://aaryan-rampal.github.io/tunescout/callback";
+    // const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+    // const REDIRECT_URI =
+    //   import.meta.env.MODE === "development"
+    //     ? "http://localhost:5173/tunescout/callback"
+    //     : "https://aaryan-rampal.github.io/tunescout/callback";
 
-    // const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
-    const SCOPES = [
-      "playlist-read-private",
-      "playlist-read-collaborative",
-      "playlist-modify-private",
-      "playlist-modify-public",
-    ];
+    // // const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+    // const SCOPES = [
+    //   "playlist-read-private",
+    //   "playlist-read-collaborative",
+    //   "playlist-modify-private",
+    //   "playlist-modify-public",
+    // ];
 
-    const authEndpoint =
-      `https://accounts.spotify.com/authorize?` +
-      `client_id=${SPOTIFY_CLIENT_ID}` +
-      `&response_type=token` +
-      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-      `&scope=${encodeURIComponent(SCOPES.join(" "))}`;
+    // const authEndpoint =
+    //   `https://accounts.spotify.com/authorize?` +
+    //   `client_id=${SPOTIFY_CLIENT_ID}` +
+    //   `&response_type=token` +
+    //   `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+    //   `&scope=${encodeURIComponent(SCOPES.join(" "))}`;
 
-    if (authEndpoint) {
-      window.location.href = authEndpoint;
-    }
+    // if (authEndpoint) {
+    //   window.location.href = authEndpoint;
+    // }
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/spotify/login`;
   };
 
   return (

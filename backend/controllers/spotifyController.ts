@@ -2,6 +2,105 @@ import { Request, Response } from "express";
 import * as spotifyService from "../services/spotifyService";
 import "../loadEnv.js";
 import { Track } from "../types.js";
+import dotenv from "dotenv";
+import prisma from 'prisma'
+import axios from 'axios'
+
+dotenv.config();
+
+const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI!; // Backend Redirect URI
+const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
+const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
+const SCOPES = [
+  "playlist-read-private",
+  "playlist-read-collaborative",
+  "playlist-modify-private",
+  "playlist-modify-public",
+];
+
+export const loginWithSpotify = (req: Request, res: Response) => {
+  console.log(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
+  const authURL = `${SPOTIFY_AUTH_URL}?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
+    REDIRECT_URI
+  )}&scope=${encodeURIComponent(SCOPES.join(" "))}`;
+
+  res.redirect(authURL);
+};
+
+export const handleSpotifyCallback = async (req: Request, res: Response) => {
+  try {
+    const { code } = req.query;
+    if (!code) return res.status(400).json({ message: "Authorization code is missing" });
+
+    // Request access token from Spotify
+    const tokenResponse = await axios.post(
+      SPOTIFY_TOKEN_URL,
+      new URLSearchParams({
+        grant_type: "authorization_code",
+        code: code as string,
+        redirect_uri: REDIRECT_URI,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+
+    const { access_token, refresh_token, expires_in } = tokenResponse.data;
+
+    // Fetch user's Spotify ID using the access token
+    const userProfile = await axios.get("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+
+    const spotifyId = userProfile.data.id;
+
+    // Redirect to frontend with a success flag (store session in frontend)
+    // res.redirect(`${process.env.FRONTEND_URL}/tunescout/dashboard?sucess=True`);
+    res.redirect(`${process.env.FRONTEND_URL}/tunescout/dashboard`);
+  } catch (error) {
+    console.error("Error exchanging code for token:", error.response?.data || error.message);
+    res.status(500).json({ message: "Failed to authenticate with Spotify" });
+  }
+};
+
+export const refreshSpotifyToken = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "User email is required" });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || !user.spotifyRefreshToken)
+      return res.status(401).json({ message: "User is not authenticated with Spotify" });
+
+    // Request new access token
+    const tokenResponse = await axios.post(
+      SPOTIFY_TOKEN_URL,
+      new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: user.spotifyRefreshToken,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    const { access_token } = tokenResponse.data;
+
+    // Update access token in database
+    await prisma.user.update({
+      where: { email },
+      data: { spotifyAccessToken: access_token }
+    });
+
+    res.status(200).json({ access_token });
+  } catch (error) {
+    console.error("Error refreshing token:", error.response?.data || error.message);
+    res.status(500).json({ message: "Failed to refresh Spotify token" });
+  }
+};
 
 // ✅ Get user playlists
 export const getUserPlaylists = async (req: Request, res: Response) => {
