@@ -89,7 +89,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const toast = useToast();
@@ -97,16 +97,16 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
         credentials: "include",
       });
 
       const data = await response.json();
       if (data.success) {
-        login({ email }); // Store user info in context
+        login({ username }); // Store user info in context
         toast({
           title: "Login Successful",
           description: "You have successfully logged in!",
@@ -143,8 +143,8 @@ export default function Login() {
           Login to Your Account
         </Heading>
         <FormControl>
-          <FormLabel>Email</FormLabel>
-          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" />
+          <FormLabel>Username</FormLabel>
+          <Input type="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username" />
         </FormControl>
         <FormControl mt="4">
           <FormLabel>Password</FormLabel>

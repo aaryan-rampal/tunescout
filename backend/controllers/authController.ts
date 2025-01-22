@@ -1,39 +1,39 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { prisma } from "../database";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { findUserByUsername, createUser } from "../database";
 
 dotenv.config();
+
 const SALT_ROUNDS = 10;
 const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key"; // Store in .env
 
-// ✅ Login User
+/**
+ * ✅ Login User with `username`
+ */
 export const loginUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
     }
 
-    // Find user in database
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    // Find user by `username`
+    const user = await findUserByUsername(username);
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Check password
+    // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     // Generate JWT token (valid for 7 days)
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: "7d" });
 
     res.status(200).json({ success: true, message: "Login successful", token });
 
@@ -42,37 +42,30 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-
-// ✅ Register a New User
+/**
+ * ✅ Register New User with `username`
+ */
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
     }
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    const existingUser = await findUserByUsername(username);
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "Username already exists" });
     }
 
-    // Hash password before storing
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Insert user into the database
-    await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-      },
-    });
+    // Create new user in database
+    await createUser(username, hashedPassword);
 
-    res.status(201).json({success: true, message: "User registered successfully" });
+    res.status(201).json({ success: true, message: "User registered successfully" });
 
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,15 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
-  user: { email: string } | null;
-  login: (userData: { email: string }) => void;
+  user: { username: string } | null;
+  login: (userData: { username: string }) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [user, setUser] = useState<{ username: string } | null>(null);
 
   useEffect(() => {
     // Check if user is already logged in (persisted via localStorage)
@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = (userData: { email: string }) => {
+  const login = (userData: { username: string }) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData)); // Persist login
   };

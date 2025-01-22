@@ -20,7 +20,7 @@ export default function Register() {
 
   const handleRegister = async () => {
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/register`,
+      `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,7 +31,8 @@ export default function Register() {
 
     const data = await response.json();
     if (data.success) {
-      navigate("/dashboard"); // Redirect after successful registration
+      // TODO: this is lazy, I should handle this better
+      navigate("/login"); // Redirect after successful registration
       toast({
         title: "Login Successful",
         description: "You have successfully registered!",

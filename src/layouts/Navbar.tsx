@@ -15,7 +15,7 @@ export default function Navbar() {
         <Flex gap="4" mr="4" alignItems="center">
           {user ? (
             <>
-              <Text color="white">Hey, {user.email.split("@")[0]}</Text>
+              <Text color="white">Hey, {user.username}</Text>
               <Button colorScheme="red" onClick={logout}>
                 Log Out
               </Button>
