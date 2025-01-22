@@ -27,3 +27,7 @@ This project aims to create a music recommender bot that provides personalized m
    ```
 
    Enjoy! 🎶
+
+**Demo Video:**
+
+https://github.com/aaryan-rampal/tunescout/blob/main/product.mov?raw=true
