@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import { AuthProvider } from "./context/AuthContext"; // Import Auth Context
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,7 +25,7 @@ const router = createBrowserRouter(
     </Route>
   ),
   {
-    basename: "/tunescout"
+    basename: "/tunescout",
   }
 );
 
@@ -33,7 +34,9 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router}/>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
