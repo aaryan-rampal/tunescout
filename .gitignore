@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 
 .env
-backend/prisma/migrations/*
-backend/prisma/migrations/database.sqlite
+prisma/migrations/*
+prisma/database.sqlite
+
