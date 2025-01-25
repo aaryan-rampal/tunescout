@@ -35,7 +35,8 @@
     "react-router-dom": "^7.1.1",
     "sqlite": "^5.1.1",
     "sqlite-async": "^1.2.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "vercel": "^39.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

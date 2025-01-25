@@ -27,3 +27,4 @@ dist-ssr
 prisma/migrations/*
 prisma/database.sqlite
 
+.vercel

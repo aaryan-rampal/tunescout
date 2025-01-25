@@ -25,7 +25,7 @@ const router = createBrowserRouter(
     </Route>
   ),
   {
-    basename: "/tunescout",
+    basename: "/",
   }
 );
 
