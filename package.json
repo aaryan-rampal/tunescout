@@ -17,7 +17,6 @@
     "@chakra-ui/react": "^2.10.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/material": "^6.3.0",
     "@prisma/client": "^6.2.1",
     "@tanstack/react-query": "^5.64.1",
     "async": "^3.2.6",
@@ -39,21 +38,14 @@
     "vercel": "^39.3.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
-    "@typescript-eslint/eslint-plugin": "^8.18.2",
-    "@typescript-eslint/parser": "^8.18.2",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-react": "^7.37.3",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "prisma": "^6.2.1",
     "typescript": "~5.6.2",
-    "typescript-eslint": "^8.18.2",
     "vite": "^6.0.3"
   }
 }
