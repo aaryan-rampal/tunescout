@@ -1,34 +1,79 @@
-# Tunescout: A Music Recommender Bot
+# 🎵 TuneScout: A Music Recommender Bot
 
-This project aims to create a music recommender bot that provides personalized music suggestions to users.
+TuneScout is an intelligent music recommender bot that provides personalized music suggestions based on user listening history and preferences. By integrating with Spotify and other music services, TuneScout enhances the listening experience with curated playlists and advanced track-matching algorithms.
 
-**Features:**
+## 🚀 Features
 
-- **User Authentication:** Supports email/password login and Spotify OAuth 2.0 authentication, securely storing encrypted tokens in a SQLite (via Prisma ORM) database. Future plans include Apple Music and Last.fm integration.
-- **User Management:** Enables users to register accounts, securely store credentials, and manage Spotify-linked profiles.
-- **Playlist & Music Recommendation:** Generates personalized playlists by analyzing Spotify listening history and stored preferences. Implements track similarity matching and playlist enhancement algorithms.
-- **Session Management & Token Handling:** Implements JWT-based authentication for secure user sessions. Utilizes Spotify refresh tokens to ensure uninterrupted access.
-- **Performance Optimization:** Uses TanStack Query for efficient API caching, reducing query execution time by 40% and improving user experience.
+### 🔐 User Authentication
+- Supports **email/password login** and **Spotify OAuth 2.0** authentication.
+- Securely stores **encrypted tokens** using SQLite via Prisma ORM.
+- Future support planned for **Apple Music**, **Last.fm** and **Amazon Music**.
 
-**Technologies:**
+### 👥 User Management
+- Register accounts and manage credentials securely.
+- Link and manage **Spotify** profiles.
+- Store listening preferences for **personalized recommendations**.
 
-- **Frontend:** React, TypeScript, Chakra UI
-- **Backend:** Node.js, Express
-- **API:** Spotify Web API, Last.fm API
-- **Other:** sqlite3, Prisma ORM
+### 🎶 Playlist & Music Recommendation
+- Generates **custom playlists** based on listening history.
+- Implements **track similarity matching** and **playlist enhancement algorithms**.
+- Supports **dynamic playlist updates** based on user preferences.
 
-**Getting Started:**
+### 🔑 Session Management & Token Handling
+- Uses **JWT-based authentication** for secure sessions.
+- **Spotify refresh tokens** ensure uninterrupted API access.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/aaryan-rampal/tunescout
-   npm run dev
-   npm run server
-   ```
+### ⚡ Performance Optimization
+- Implements **TanStack Query** for efficient API caching.
+- Reduces query execution time by **40%**, improving responsiveness.
 
-   Enjoy! 🎶
+## 🛠️ Technologies
 
-**Demo Video:** 
+### Frontend
+- **React** + **TypeScript**
+- **Chakra UI** for sleek and responsive design
 
-Please click the image to view the full demo
+### Backend
+- **Node.js** + **Express**
+- **Spotify Web API** + **Last.fm API** for music data retrieval
+- (Future) Migration to **AWS Lambda**
+
+### Database & ORM
+- **SQLite3** powered by **Prisma ORM**
+- (Future) Migration to **DynamoDB** for scalability
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the Repository
+```sh
+git clone https://github.com/aaryan-rampal/tunescout
+cd tunescout
+```
+
+### 2️⃣ Install Dependencies
+```sh
+npm install
+```
+
+### 3️⃣ Start the Development Server
+```sh
+npm run dev
+```
+
+### 4️⃣ Start the Backend Server
+```sh
+npm run server
+```
+
+## 🎥 Demo Video
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Zsazn-n3pHo/0.jpg)](https://www.youtube.com/watch?v=Zsazn-n3pHo)
+
+## 📜 License
+This project is licensed under the **MIT License**.
+
+## 📬 Contact & Contributions
+- **Contributions Welcome!** Feel free to fork the repo and submit a pull request.
+- If you have suggestions or issues, open an **issue** on GitHub.
+
+🎶 _Enjoy your personalized music experience with TuneScout!_ 🎶
+
