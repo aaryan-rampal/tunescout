@@ -27,4 +27,4 @@ dist-ssr
 prisma/migrations/*
 prisma/database.sqlite
 
-fastapi-backend/__pycache__
+__pycache__/
