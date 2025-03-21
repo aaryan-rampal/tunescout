@@ -1,17 +1,40 @@
 from pydantic import BaseModel
-from typing import List
 
-class Track:
+
+class Track(BaseModel):
+    """Generic Pydantic model used throughout the API to represent a track.
+
+    Args:
+        BaseModel: Pydantic model.
+
+    """
+
     name: str
     artist: str
     uri: str
     # TODO: should it be id?
     id: str
 
+
 class GeneratePlaylistRequest(BaseModel):
+    """Pydantic model used for spotify_router.generate_playlist().
+
+    Args:
+        BaseModel: Pydantic model.
+
+    """
+
     playlist_id: str
     number_of_songs: int
 
-class GeneratePlaylistRequest(BaseModel):
-    tracks: List[Track]
+
+class CreatePlaylistRequest(BaseModel):
+    """Pydantic model used for spotify_router.create_playlist().
+
+    Args:
+        BaseModel: Pydantic model.
+
+    """
+
+    tracks: list[Track]
     name: str

@@ -1,9 +1,8 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
+
 from app.routers import spotify_routes
-from app.utils import get_spotify_token
 
 app = FastAPI()
-app = FastAPI(dependencies=[Depends(get_spotify_token)])
 app.include_router(spotify_routes.router)
 
 

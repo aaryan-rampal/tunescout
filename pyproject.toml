@@ -1,0 +1,32 @@
+[tool.ruff]
+line-length = 88            # Consistent with Black
+fix = true                  # Auto-fix issues when possible
+target-version = "py312"    
+fixable = ["ALL"]              # Allow Ruff to fix issues
+
+# Enable rule sets (like flake8, isort, pep8-naming, etc.)
+select = [
+  "E",    # pycodestyle (errors)
+  "F",    # pyflakes (undefined names, unused imports)
+  "I",    # isort (import sorting)
+  "N",    # pep8-naming (class/function naming)
+  "D",    # pydocstyle (docstring rules)
+  "UP",   # pyupgrade (syntax modernization)
+  "B",    # bugbear (likely bugs and anti-patterns)
+  "C4",   # comprehensions (comprehension simplifications)
+  "SIM",  # simplify (simplifiable expressions)
+  "TID",  # tidy imports (e.g., stdlib vs third-party)
+]
+
+ignore = [
+  "D100",  # Missing docstring in public module
+  "D104",  # Missing docstring in public package
+  "D107",  # Missing docstring in __init__
+]
+
+[tool.ruff.format]
+quote-style = "double"      # Use double quotes for strings
+indent-style = "space"      # Use spaces over tabs
+line-ending = "auto"        # Detect OS line endings automatically
+docstring-code-format = true
+skip-magic-trailing-comma = false
