@@ -1,0 +1,107 @@
+=== database.ts ===
+import { PrismaClient } from "@prisma/client";
+
+export const prisma = new PrismaClient();
+
+/** 
+ * ✅ Upsert a user based on their email and store Spotify access/refresh tokens
+ */
+export const upsertUserWithSpotifyTokens = async (email: string, accessToken: string, refreshToken: string) => {
+    return prisma.user.upsert({
+      where: { email },
+      update: { spotifyAccessToken: accessToken, spotifyRefreshToken: refreshToken },
+      create: { email, password: "", spotifyAccessToken: accessToken, spotifyRefreshToken: refreshToken },
+    });
+  };
+  
+  /**
+   * ✅ Retrieve a user's Spotify access and refresh tokens
+   */
+  export const getSpotifyTokensByEmail = async (email: string) => {
+    return prisma.user.findUnique({
+      where: { email },
+      select: { spotifyAccessToken: true, spotifyRefreshToken: true },
+    });
+  };
+  
+  /**
+   * ✅ Update the Spotify access token for a user
+   */
+  export const updateSpotifyAccessToken = async (email: string, newAccessToken: string) => {
+    return prisma.user.update({
+      where: { email },
+      data: { spotifyAccessToken: newAccessToken },
+    });
+  };
+  
+  export default prisma; // Export Prisma client instance
+-----------------------------
+
+=== loadEnv.js ===
+import dotenv from "dotenv";
+dotenv.config();
+-----------------------------
+
+=== server.ts ===
+// server.js
+import express from "express";
+import cors from "cors";
+import "./loadEnv.js";
+import { prisma } from "./database";
+import { spotifyRoutes } from "./routes/spotifyRoutes";
+import { authRoutes } from "./routes/authRoutes";
+
+const app = express();
+app.use(express.json()); // To parse JSON request bodies
+app.use(cors());
+
+
+app.use("/spotify", spotifyRoutes);
+app.use("/auth", authRoutes);
+
+process.on("SIGINT", async () => {
+  await prisma.$disconnect();
+  process.exit();
+});
+
+const port = process.env.PORT || 3001;
+// Start the server
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
+-----------------------------
+
+=== types.ts ===
+// Extend Express Request to include access_token in body
+declare namespace Express {
+  export interface Request {
+    body: {
+      access_token?: string;
+      playlist_id?: string;
+      number_of_songs?: number;
+      number_of_refreshes?: number;
+      tracks?: Track[];
+      name?: string;
+    };
+  }
+}
+
+// ✅ Define a Track Interface
+export interface Track {
+  name: string;
+  artist: string;
+}
+
+// ✅ Define a Request Interface for Spotify Access Token
+export interface SpotifyAccessTokenRequest {
+  access_token: string;
+}
+
+// ✅ Define an Interface for the Similar Tracks Fetching Function
+export interface FetchSimilarTracksFn {
+  (originalTracks: Track[], number_of_songs: number): Promise<Track[]>;
+}
+
+-----------------------------
+

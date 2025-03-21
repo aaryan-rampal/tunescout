@@ -46,7 +46,7 @@ export const loginUser = async (req: Request, res: Response) => {
 // ✅ Register a New User
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, username, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });

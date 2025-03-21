@@ -13,21 +13,27 @@ import {
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const toast = useToast(); // Initialize toast
 
   const handleRegister = async () => {
+    console.log(JSON.stringify({ email, username, password }));
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/register`,
+      `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, username, password }),
         credentials: "include",
       }
     );
+
+    // Log raw response text
+    const text = await response.text();
+    console.log("Raw response:", text);
 
     const data = await response.json();
     if (data.success) {
@@ -70,6 +76,15 @@ export default function Register() {
           Create an Account
         </Heading>
         <FormControl>
+          <FormLabel>Email</FormLabel>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+          />
+        </FormControl>
+        <FormControl mt="4">
           <FormLabel>Username</FormLabel>
           <Input
             type="username"
