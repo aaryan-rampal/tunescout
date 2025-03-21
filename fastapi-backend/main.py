@@ -1,8 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from .routers import spotify_routes
+from .utils import get_query_token
 
 app = FastAPI()
+app = FastAPI(dependencies=[Depends(get_query_token)])
+app.include_router(spotify_routes.router)
 
+@app.get("/")
+async def root():
+    return {"message": "Hello Bigger Applications!"}
 
-@app.get("/items/{item_id}")
-async def root(item_id: int):
-    return {"item_id": item_id}
