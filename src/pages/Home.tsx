@@ -8,16 +8,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 import spotifyLogo from "../assets/spotify-logo.png";
+import { generateRandomString, sha256, base64encode } from "../utils";
 
 export default function Home() {
-  const handleLogin = () => {
-    const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+  const handleLogin = async () => {
+    const VITE_SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
     const REDIRECT_URI =
       import.meta.env.MODE === "development"
         ? "http://localhost:5173/tunescout/callback"
         : "https://aaryan-rampal.github.io/tunescout/callback";
 
-    // const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
     const SCOPES = [
       "playlist-read-private",
       "playlist-read-collaborative",
@@ -25,16 +25,36 @@ export default function Home() {
       "playlist-modify-public",
     ];
 
-    const authEndpoint =
-      `https://accounts.spotify.com/authorize?` +
-      `client_id=${SPOTIFY_CLIENT_ID}` +
-      `&response_type=token` +
-      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-      `&scope=${encodeURIComponent(SCOPES.join(" "))}`;
+    // const authEndpoint =
+    //   `https://accounts.spotify.com/authorize?` +
+    //   `client_id=${SPOTIFY_CLIENT_ID}` +
+    //   `&response_type=token` +
+    //   `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+    //   `&scope=${encodeURIComponent(SCOPES.join(" "))}`;
 
-    if (authEndpoint) {
-      window.location.href = authEndpoint;
-    }
+    const authUrl = new URL("https://accounts.spotify.com/authorize");
+    const codeVerifier = generateRandomString(64);
+    const hashed = await sha256(codeVerifier);
+    const codeChallenge = base64encode(hashed);
+
+    // generated in the previous step
+    window.localStorage.setItem("code_verifier", codeVerifier);
+
+    const params = {
+      response_type: "code",
+      client_id: VITE_SPOTIFY_CLIENT_ID,
+      SCOPES,
+      code_challenge_method: "S256",
+      code_challenge: codeChallenge,
+      redirect_uri: REDIRECT_URI,
+    };
+
+    console.log(window.location.href);
+    console.log(VITE_SPOTIFY_CLIENT_ID);
+    console.log(new URLSearchParams(params).toString());
+
+    authUrl.search = new URLSearchParams(params).toString();
+    window.location.href = authUrl.toString();
   };
 
   return (
