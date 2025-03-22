@@ -1,11 +1,29 @@
 import httpx
-from fastapi import Body, Header
+from fastapi import Body, Header, HTTPException
+from fastapi.responses import JSONResponse
 
 from app.schemas.playlists import AuthCodeBody, GeneratePlaylistRequest
+from app.services import spotify_service
 
 
-async def get_user_playlists(authorization: str = Header(...)):
-    pass
+async def check_authorization(authorization: str):
+    if not authorization:
+        raise HTTPException(status_code=400, detail="Authorization header is required")
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=400, detail="Invalid Authorization format")
+
+    token = authorization.removeprefix("Bearer ").strip()
+    return token
+
+
+async def get_playlists(authorization: str = Header(...)):
+    token = await check_authorization(authorization)
+    print(f"got token {token}")
+    try:
+        playlists = await spotify_service.get_playlists(token)
+        return JSONResponse(content=playlists, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 async def generate_playlist(

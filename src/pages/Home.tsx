@@ -36,7 +36,7 @@ export default function Home() {
     const params = {
       response_type: "code",
       client_id: VITE_SPOTIFY_CLIENT_ID,
-      SCOPES,
+      scope: SCOPES,
       code_challenge_method: "S256",
       code_challenge: codeChallenge,
       redirect_uri: REDIRECT_URI,

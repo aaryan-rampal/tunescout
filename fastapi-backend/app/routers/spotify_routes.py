@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 
 from app.controllers import spotify_controller
 from app.schemas.playlists import CreatePlaylistRequest, GeneratePlaylistRequest
@@ -12,16 +12,16 @@ router = APIRouter(
 )
 
 
-@router.post("/spotify/get_playlists", tags=["spotify"])
-async def get_playlists():  # noqa: D103
-    return await spotify_controller.get_user_playlists()
+@router.post("/get_playlists", tags=["spotify"])
+async def get_playlists(authorization: str = Header(...)):  # noqa: D103
+    return await spotify_controller.get_playlists(authorization)
 
 
-@router.post("/spotify/generate_playlist", tags=["spotify"])
+@router.post("/generate_playlist", tags=["spotify"])
 async def generate_playlist(request: GeneratePlaylistRequest):
     return await spotify_controller.generate_playlist(request)
 
 
-@router.post("/spotify/create_playlist", tags=["spotify"])
+@router.post("/create_playlist", tags=["spotify"])
 async def create_playlist(request: CreatePlaylistRequest):
     return await spotify_controller.create_playlist(request)

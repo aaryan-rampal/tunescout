@@ -1,9 +1,7 @@
 import apiRequest from "../api/apiClient";
 
 export const getPlaylists = async (accessToken: string) => {
-  return apiRequest<any[]>("POST", "/get_playlists", {
-    access_token: accessToken,
-  });
+  return apiRequest<any[]>("POST", "/get_playlists", {}, accessToken);
 };
 
 export const generatePlaylist = async (
@@ -12,12 +10,16 @@ export const generatePlaylist = async (
   numberOfRefreshes: number,
   numSongs: number,
 ) => {
-  return apiRequest<any[]>("POST", "/generate_playlist", {
-    playlist_id: playlistId,
-    access_token: accessToken,
-    number_of_refreshes: numberOfRefreshes,
-    number_of_songs: numSongs,
-  });
+  return apiRequest<any[]>(
+    "POST",
+    "/generate_playlist",
+    {
+      playlist_id: playlistId,
+      number_of_refreshes: numberOfRefreshes,
+      number_of_songs: numSongs,
+    },
+    accessToken,
+  );
 };
 
 export const createPlaylist = async (
@@ -25,9 +27,13 @@ export const createPlaylist = async (
   tracks: any[],
   name: string,
 ) => {
-  return apiRequest<any>("POST", "/create_playlist", {
-    access_token: accessToken,
-    tracks,
-    name,
-  });
+  return apiRequest<any>(
+    "POST",
+    "/create_playlist",
+    {
+      tracks,
+      name,
+    },
+    accessToken,
+  );
 };
