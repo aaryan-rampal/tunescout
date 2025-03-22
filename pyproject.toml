@@ -2,7 +2,6 @@
 line-length = 88            # Consistent with Black
 fix = true                  # Auto-fix issues when possible
 target-version = "py312"    
-fixable = ["ALL"]              # Allow Ruff to fix issues
 
 # Enable rule sets (like flake8, isort, pep8-naming, etc.)
 select = [

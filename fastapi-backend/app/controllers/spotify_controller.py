@@ -1,4 +1,6 @@
 from fastapi import Body, Header
+import httpx
+from urllib import parse
 
 from app.schemas.playlists import GeneratePlaylistRequest
 
@@ -27,3 +29,15 @@ async def create_playlist(
     request: GeneratePlaylistRequest = Body(...),  # noqa: B008
 ):
     pass
+
+async def callback(code: str, code_verifier: str, redirect_uri: str):
+    async with httpx.AsyncClient() as client:
+        params = {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": redirect_uri,
+            "code_verifier": code_verifier,
+        }
+        base_url = "https://accounts.spotify.com/api/token"
+        url = parse.urlencode(params)
+
