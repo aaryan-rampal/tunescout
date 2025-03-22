@@ -22,7 +22,12 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Button as={Link} to="/login" colorScheme="teal" variant="outline">
+              <Button
+                as={Link}
+                to="/login"
+                colorScheme="teal"
+                variant="outline"
+              >
                 Sign In
               </Button>
               <Button as={Link} to="/register" colorScheme="green">

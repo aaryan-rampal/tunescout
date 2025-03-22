@@ -8,12 +8,23 @@ const apiClient = axios.create({
 });
 
 // Wrapper for requests
-const apiRequest = async <T>(method: string, endpoint: string, data?: any): Promise<T> => {
+const apiRequest = async <T>(
+  method: string,
+  endpoint: string,
+  data?: any,
+): Promise<T> => {
   try {
-    const response = await apiClient.request<T>({ method, url: endpoint, data });
+    const response = await apiClient.request<T>({
+      method,
+      url: endpoint,
+      data,
+    });
     return response.data;
   } catch (error: any) {
-    console.error(`API error on ${endpoint}:`, error.response?.data || error.message);
+    console.error(
+      `API error on ${endpoint}:`,
+      error.response?.data || error.message,
+    );
     throw error;
   }
 };

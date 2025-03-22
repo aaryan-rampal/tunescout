@@ -22,11 +22,11 @@ const router = createBrowserRouter(
       <Route path="/register" element={<Register />} />
       <Route path="/callback" element={<Callback />} />
       <Route path="/dashboard" element={<Dashboard />} />
-    </Route>
+    </Route>,
   ),
   {
     basename: "/tunescout",
-  }
+  },
 );
 
 const queryClient = new QueryClient();

@@ -44,7 +44,7 @@ export default function Home() {
 
     authUrl.search = new URLSearchParams(params).toString();
 
-    console.log("")
+    console.log("");
     console.log("This is the url " + authUrl.toString());
 
     window.location.href = authUrl.toString();

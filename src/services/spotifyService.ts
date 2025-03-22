@@ -10,7 +10,7 @@ export const generatePlaylist = async (
   playlistId: string,
   accessToken: string,
   numberOfRefreshes: number,
-  numSongs: number
+  numSongs: number,
 ) => {
   return apiRequest<any[]>("POST", "/generate_playlist", {
     playlist_id: playlistId,
@@ -23,7 +23,7 @@ export const generatePlaylist = async (
 export const createPlaylist = async (
   accessToken: string,
   tracks: any[],
-  name: string
+  name: string,
 ) => {
   return apiRequest<any>("POST", "/create_playlist", {
     access_token: accessToken,
