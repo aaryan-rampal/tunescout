@@ -2,6 +2,14 @@ import httpx
 from fastapi import HTTPException
 
 
+def simplify(playlist):
+    return {
+        "id": playlist["id"],
+        "name": playlist["name"],
+        "image": (playlist.get("images") or [{}])[0].get("url", ""),
+    }
+
+
 async def get_playlists(token: str):
     headers = {"Authorization": f"Bearer {token}"}
     playlists = []
@@ -13,11 +21,6 @@ async def get_playlists(token: str):
                 response.raise_for_status()
 
                 data = response.json()
-                simplify = lambda playlist: {
-                    "id": playlist["id"],
-                    "name": playlist["name"],
-                    "image": (playlist.get("images") or [{}])[0].get("url", ""),
-                }
 
                 simplified_data = list(map(simplify, data.get("items", [])))
                 playlists.extend(simplified_data)

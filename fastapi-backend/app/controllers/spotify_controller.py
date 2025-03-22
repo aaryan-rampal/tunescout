@@ -18,7 +18,6 @@ async def check_authorization(authorization: str):
 
 async def get_playlists(authorization: str = Header(...)):
     token = await check_authorization(authorization)
-    print(f"got token {token}")
     try:
         playlists = await spotify_service.get_playlists(token)
         return JSONResponse(content=playlists, status_code=200)
