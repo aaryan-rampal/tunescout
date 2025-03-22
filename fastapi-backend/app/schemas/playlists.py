@@ -38,3 +38,10 @@ class CreatePlaylistRequest(BaseModel):
 
     tracks: list[Track]
     name: str
+
+
+class AuthCodeBody(BaseModel):
+    client_id: str
+    code: str
+    code_verifier: str
+    redirect_uri: str
