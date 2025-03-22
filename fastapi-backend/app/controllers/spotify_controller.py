@@ -1,8 +1,7 @@
-from fastapi import Body, Header
 import httpx
-from urllib import parse
+from fastapi import Body, Header
 
-from app.schemas.playlists import GeneratePlaylistRequest
+from app.schemas.playlists import AuthCodeBody, GeneratePlaylistRequest
 
 
 async def get_user_playlists(authorization: str = Header(...)):
@@ -30,14 +29,23 @@ async def create_playlist(
 ):
     pass
 
-async def callback(code: str, code_verifier: str, redirect_uri: str):
+
+async def callback(request: AuthCodeBody):
     async with httpx.AsyncClient() as client:
         params = {
+            "client_id": request.client_id,
             "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": redirect_uri,
-            "code_verifier": code_verifier,
+            "code": request.code,
+            "redirect_uri": request.redirect_uri,
+            "code_verifier": request.code_verifier,
         }
-        base_url = "https://accounts.spotify.com/api/token"
-        url = parse.urlencode(params)
 
+        base_url = "https://accounts.spotify.com/api/token"
+
+        response = await client.post(
+            base_url,
+            data=params,
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+
+        return response.json()

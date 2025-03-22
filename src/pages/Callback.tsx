@@ -1,41 +1,48 @@
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 const Callback = () => {
   const navigate = useNavigate();
   const tokenProcessedRef = useRef(false);
 
   useEffect(() => {
-    // if token has already been processed, return
-    if (tokenProcessedRef.current) {
-      return;
-    }
+    const doAuth = async () => {
+      const VITE_SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+      const REDIRECT_URI =
+        import.meta.env.MODE === "development"
+          ? "http://localhost:5173/tunescout/callback"
+          : "https://aaryan-rampal.github.io/tunescout/callback";
 
-    // Parse the access token from the URL hash
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    const code_verifier = localStorage.getItem("code_verifier");
+      // Parse the access token from the URL hash
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const code_verifier = localStorage.getItem("code_verifier");
 
-    console.log("got here with code verifier " + code_verifier);
+      tokenProcessedRef.current = true;
 
-    if (code && code_verifier) {
-      const response = await fetch("/api/auth/callback", {
+      const response = await fetch("http://127.0.0.1:8000/auth/callback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          code,
-          code_verifier: codeVerifier,
+          client_id: VITE_SPOTIFY_CLIENT_ID,
+          code: code,
+          code_verifier: code_verifier,
+          redirect_uri: REDIRECT_URI,
         }),
       });
 
-      window.location.hash = ""; // Clears the URL fragment
-      tokenProcessedRef.current = true;
+      const json_body = await response.json();
+      localStorage.setItem("access_token", json_body.access_token);
+      console.log(json_body);
       navigate("/dashboard");
-    } else {
-      // TODO: Handle error better
-      console.log("Invalid response from Spotify");
+      return json_body;
+    };
+
+    // if token has already been processed, return
+    if (!tokenProcessedRef.current) {
+      doAuth();
     }
   }, [navigate]);
 

@@ -14,14 +14,14 @@ router = APIRouter(
 
 @router.post("/spotify/get_playlists", tags=["spotify"])
 async def get_playlists():  # noqa: D103
-    return spotify_controller.get_user_playlists()
+    return await spotify_controller.get_user_playlists()
 
 
 @router.post("/spotify/generate_playlist", tags=["spotify"])
 async def generate_playlist(request: GeneratePlaylistRequest):
-    return spotify_controller.generate_playlist(request)
+    return await spotify_controller.generate_playlist(request)
 
 
 @router.post("/spotify/create_playlist", tags=["spotify"])
 async def create_playlist(request: CreatePlaylistRequest):
-    return spotify_controller.create_playlist(request)
+    return await spotify_controller.create_playlist(request)

@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from app.controllers import spotify_controller
+from app.schemas.playlists import AuthCodeBody
 
 router = APIRouter(
     prefix="/auth",
@@ -9,6 +10,5 @@ router = APIRouter(
 
 
 @router.post("/callback", tags=["auth"])
-async def callback(code: str, code_verifier: str, redirect_uri: str):
-    return spotify_controller.callback(code, code_verifier, redirect_uri)
-
+async def callback(request: AuthCodeBody):
+    return await spotify_controller.callback(request)
