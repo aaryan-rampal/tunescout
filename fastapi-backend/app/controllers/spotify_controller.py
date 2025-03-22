@@ -31,7 +31,18 @@ async def create_playlist(
 
 
 async def callback(request: AuthCodeBody):
+    """Complete PKCE flow and get access token from Spotify.
+
+    Args:
+        request (AuthCodeBody): AuthCodeBody schema containing the code, redirect_uri,
+        client_id, and code_verifier.
+
+    Returns:
+        response.json: JSON response from Spotify containing the access token.
+
+    """
     async with httpx.AsyncClient() as client:
+        base_url = "https://accounts.spotify.com/api/token"
         params = {
             "client_id": request.client_id,
             "grant_type": "authorization_code",
@@ -39,8 +50,6 @@ async def callback(request: AuthCodeBody):
             "redirect_uri": request.redirect_uri,
             "code_verifier": request.code_verifier,
         }
-
-        base_url = "https://accounts.spotify.com/api/token"
 
         response = await client.post(
             base_url,

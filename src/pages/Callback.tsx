@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Callback = () => {
   const navigate = useNavigate();
@@ -35,9 +35,8 @@ const Callback = () => {
 
       const json_body = await response.json();
       localStorage.setItem("access_token", json_body.access_token);
-      console.log(json_body);
       navigate("/dashboard");
-      return json_body;
+      return;
     };
 
     // if token has already been processed, return
