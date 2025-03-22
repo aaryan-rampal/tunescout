@@ -25,13 +25,6 @@ export default function Home() {
       "playlist-modify-public",
     ];
 
-    // const authEndpoint =
-    //   `https://accounts.spotify.com/authorize?` +
-    //   `client_id=${SPOTIFY_CLIENT_ID}` +
-    //   `&response_type=token` +
-    //   `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    //   `&scope=${encodeURIComponent(SCOPES.join(" "))}`;
-
     const authUrl = new URL("https://accounts.spotify.com/authorize");
     const codeVerifier = generateRandomString(64);
     const hashed = await sha256(codeVerifier);
@@ -49,11 +42,11 @@ export default function Home() {
       redirect_uri: REDIRECT_URI,
     };
 
-    console.log(window.location.href);
-    console.log(VITE_SPOTIFY_CLIENT_ID);
-    console.log(new URLSearchParams(params).toString());
-
     authUrl.search = new URLSearchParams(params).toString();
+
+    console.log("")
+    console.log("This is the url " + authUrl.toString());
+
     window.location.href = authUrl.toString();
   };
 

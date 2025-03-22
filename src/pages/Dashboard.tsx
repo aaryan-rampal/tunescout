@@ -43,12 +43,12 @@ const Dashboard: React.FC = () => {
 
   const formatTotalRuntime = (recommendedTracks: { runtime: number }[]): string => {
     if (!recommendedTracks || recommendedTracks.length === 0) return "0m";
-  
+
     const totalMs = recommendedTracks.reduce((sum, track) => sum + track.runtime, 0);
     const totalMinutes = Math.floor(totalMs / 60000);
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-  
+
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     }
