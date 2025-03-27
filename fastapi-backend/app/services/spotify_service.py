@@ -3,6 +3,15 @@ from fastapi import HTTPException
 
 
 def simplify(playlist):
+    """Parse a playlist dict into only the items needed.
+
+    Args:
+        playlist (dict): Dictionary of playlist items received from Spotify.
+
+    Returns:
+        dict: Smaller subset of playlist with only required fields
+
+    """
     return {
         "id": playlist["id"],
         "name": playlist["name"],
