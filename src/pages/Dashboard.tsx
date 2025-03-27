@@ -41,8 +41,6 @@ const Dashboard: React.FC = () => {
     enabled: !!accessToken,
   });
 
-  console.log(playlists);
-
   const formatTotalRuntime = (
     recommendedTracks: { runtime: number }[],
   ): string => {

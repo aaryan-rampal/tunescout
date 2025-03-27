@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 
 from app.schemas.playlists import AuthCodeBody, GeneratePlaylistRequest
 from app.services import spotify_service
+import logging
 
 
 async def check_authorization(authorization: str):
@@ -37,7 +38,25 @@ async def generate_playlist(
             number of songs.
 
     """
-    pass
+    token = await check_authorization(authorization)
+    try:
+        logger = logging.getLogger(__name__)
+        logger.warning("I got here")
+        original_tracks = await spotify_service.fetch_all_tracks(
+            token, request.playlist_id
+        )
+        if len(original_tracks) <= 10:
+            raise HTTPException(
+                status_code=500, detail="Playlist does not have enough tracks."
+            )
+
+        similar_tracks = await spotify_service.fetch_similar_tracks(
+            original_tracks, request.number_of_songs
+        )
+        spotify_tracks = await spotify_service.convert_to_spotify(token, similar_tracks)
+        return JSONResponse(content=spotify_tracks, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 async def create_playlist(

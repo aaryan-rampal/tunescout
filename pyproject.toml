@@ -1,10 +1,10 @@
 [tool.ruff]
 line-length = 88            # Consistent with Black
 fix = true                  # Auto-fix issues when possible
-target-version = "py312"    
+target-version = "py312"
 
 # Enable rule sets (like flake8, isort, pep8-naming, etc.)
-select = [
+lint.select = [
   "E",    # pycodestyle (errors)
   "F",    # pyflakes (undefined names, unused imports)
   "I",    # isort (import sorting)
@@ -17,10 +17,11 @@ select = [
   "TID",  # tidy imports (e.g., stdlib vs third-party)
 ]
 
-ignore = [
+lint.ignore = [
   "D100",  # Missing docstring in public module
   "D104",  # Missing docstring in public package
   "D107",  # Missing docstring in __init__
+  "UP006", # In FastAPI, we use List[Model] to generate Swagger UI
 ]
 
 [tool.ruff.format]
