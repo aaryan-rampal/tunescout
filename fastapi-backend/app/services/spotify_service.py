@@ -26,6 +26,25 @@ def simplify(playlist):
     }
 
 
+async def filter_duplicates(playlists: List[dict]):
+    """Filter out duplicate playlists based on their IDs.
+
+    Args:
+        playlists (List[dict]): List of playlist dictionaries.
+
+    Returns:
+        List[dict]: List of unique playlists.
+
+    """
+    seen = set()
+    unique_playlists = []
+    for playlist in playlists:
+        if playlist["id"] not in seen:
+            seen.add(playlist["id"])
+            unique_playlists.append(playlist)
+    return unique_playlists
+
+
 async def get_playlists(token: str):
     headers = {"Authorization": f"Bearer {token}"}
     playlists = []
@@ -42,7 +61,8 @@ async def get_playlists(token: str):
                 playlists.extend(simplified_data)
                 url = data.get("next")
 
-            return playlists
+            filtered_playlists = await filter_duplicates(playlists)
+            return filtered_playlists
         except HTTPException as e:
             print(str(e))
             raise
@@ -73,7 +93,6 @@ async def fetch_all_tracks(token: str, playlist_id: str):
             raise
 
     pass
-
 
 
 async def fetch_similar_tracks(original_tracks: List[Track], number_of_songs: int):

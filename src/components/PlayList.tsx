@@ -23,6 +23,19 @@ const PlaylistList: React.FC<PlaylistListProps> = ({
     setSelectedId(playlist.id);
   };
 
+  const duplicateIds = playlists
+    .map((p) => p.id)
+    .filter((id, index, self) => self.indexOf(id) !== index);
+
+  if (duplicateIds.length > 0) {
+    const duplicateTracks = playlists.filter((p) =>
+      duplicateIds.includes(p.id),
+    );
+    console.log("Duplicate playlist IDs found:", duplicateTracks);
+  } else {
+    console.log("No duplicate playlist IDs found.");
+  }
+
   return (
     <Box
       maxH="65vh"
