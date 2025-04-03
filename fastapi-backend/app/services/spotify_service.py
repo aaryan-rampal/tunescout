@@ -71,19 +71,47 @@ async def get_playlists(token: str):
             raise
 
 
+def spotify_tracks_to_track(items: List[dict]) -> List[Track]:
+    """Convert Spotify track items to Track schema.
+
+    Args:
+        items (List[dict]): List of track items from Spotify.
+
+    Returns:
+        List[Track]: List of Track objects.
+
+    """
+    return [
+        Track(
+            name=item["track"]["name"],
+            artists=[artist["name"] for artist in item["track"]["artists"]],
+            uri=item["track"]["uri"],
+            image_url=(item["track"].get("album", {}).get("images") or [{}])[0].get(
+                "url", ""
+            ),
+            id=item["track"]["id"],
+        )
+        for item in items
+    ]
+
+
 async def fetch_all_tracks(token: str, playlist_id: str):
     headers = {"Authorization": f"Bearer {token}"}
     track_ids = []
-    url = f"https://api.spotify.com/v1/me/playlists/{playlist_id}/tracks"
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
     async with httpx.AsyncClient() as client:
         try:
+            tracks = []
             while url:
                 response = await client.get(url, headers=headers)
                 response.raise_for_status()
 
                 data = response.json()
-                print(data.get("items", []))
-                break
+                items = data.get("items", [])
+                tracks.extend(spotify_tracks_to_track(items))
+                url = data.get("next")
+
+            return tracks
 
         except HTTPException as e:
             print(str(e))

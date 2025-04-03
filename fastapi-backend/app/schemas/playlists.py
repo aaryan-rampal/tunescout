@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 
@@ -10,8 +11,9 @@ class Track(BaseModel):
     """
 
     name: str
-    artist: str
+    artists: List[str]
     uri: str
+    image_url: str
     # TODO: should it be id?
     id: str
 
