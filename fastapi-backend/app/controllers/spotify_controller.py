@@ -41,7 +41,6 @@ async def generate_playlist(
     token = await check_authorization(authorization)
     try:
         logger = logging.getLogger(__name__)
-        logger.warning("I got here")
         original_tracks = await spotify_service.fetch_all_tracks(
             token, request.playlist_id
         )

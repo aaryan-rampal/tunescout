@@ -15,21 +15,6 @@ const apiRequest = async <T>(
   body: any = {},
   accessToken?: string,
 ): Promise<T> => {
-  // try {
-  //   const response = await apiClient.request<T>({
-  //     method,
-  //     url: endpoint,
-  //     data,
-  //   });
-  //   console.log("Sending request to", endpoint);
-  //   return response.data;
-  // } catch (error: any) {
-  //   console.error(
-  //     `API error on ${endpoint}:`,
-  //     error.response?.data || error.message,
-  //   );
-  //   throw error;
-  // }
   const res = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {

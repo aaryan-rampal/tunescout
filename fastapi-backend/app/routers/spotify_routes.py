@@ -18,8 +18,10 @@ async def get_playlists(authorization: str = Header(...)):  # noqa: D103
 
 
 @router.post("/generate_playlist", tags=["spotify"])
-async def generate_playlist(request = GeneratePlaylistRequest, authorication: str = Header(...)):
-    return await spotify_controller.generate_playlist(authorication, request)
+async def generate_playlist(
+    request: GeneratePlaylistRequest, authorization: str = Header(...)
+):
+    return await spotify_controller.generate_playlist(authorization, request)
 
 
 @router.post("/create_playlist", tags=["spotify"])
