@@ -1,4 +1,4 @@
-import apiRequest from "../api/apiClient";
+import apiRequest from "./apiClient";
 
 export const getPlaylists = async (accessToken: string) => {
   return apiRequest<any[]>("POST", "/get_playlists", {}, accessToken);

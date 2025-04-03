@@ -4,7 +4,7 @@ import {
   getPlaylists,
   generatePlaylist,
   createPlaylist,
-} from "../services/spotifyService";
+} from "../api/spotifyService";
 import {
   Box,
   Heading,
