@@ -1,3 +1,6 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi import Header, HTTPException
 
 
@@ -19,3 +22,14 @@ def catch_http_errors(func):
             raise
 
     return wrapper
+
+
+def get_lastfm_key():
+    """Get the Last.fm API key from environment variables.
+
+    Returns:
+        str: Last.fm API key.
+
+    """
+    load_dotenv()
+    return os.getenv("VITE_LASTFM_API_KEY")

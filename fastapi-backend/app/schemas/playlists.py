@@ -17,6 +17,7 @@ class Track(BaseModel):
     image_url: str
     # TODO: should it be id?
     id: str
+    similarity: float = 0.0
 
 
 class GeneratePlaylistRequest(BaseModel):

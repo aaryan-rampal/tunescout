@@ -40,14 +40,13 @@ async def generate_playlist(
 
     """
     token = await check_authorization(authorization)
-    logger = logging.getLogger(__name__)
     original_tracks = await spotify_service.fetch_all_tracks(token, request.playlist_id)
     if len(original_tracks) <= 10:
         raise HTTPException(
             status_code=500, detail="Playlist does not have enough tracks."
         )
 
-    similar_tracks = await spotify_service.fetch_similar_tracks(
+    similar_tracks = await spotify_service.fetch_enough_similar_tracks(
         original_tracks, request.number_of_songs
     )
     spotify_tracks = await spotify_service.convert_to_spotify(token, similar_tracks)
