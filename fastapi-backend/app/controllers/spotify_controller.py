@@ -1,10 +1,12 @@
+import logging
+
 import httpx
 from fastapi import Body, Header, HTTPException
 from fastapi.responses import JSONResponse
 
 from app.schemas.playlists import AuthCodeBody, GeneratePlaylistRequest
 from app.services import spotify_service
-import logging
+from app.utils import catch_http_errors
 
 
 async def check_authorization(authorization: str):
@@ -17,15 +19,14 @@ async def check_authorization(authorization: str):
     return token
 
 
+@catch_http_errors
 async def get_playlists(authorization: str = Header(...)):
     token = await check_authorization(authorization)
-    try:
-        playlists = await spotify_service.get_playlists(token)
-        return JSONResponse(content=playlists, status_code=200)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    playlists = await spotify_service.get_playlists(token)
+    return JSONResponse(content=playlists, status_code=200)
 
 
+@catch_http_errors
 async def generate_playlist(
     authorization: str,
     request: GeneratePlaylistRequest,  # noqa: B008
@@ -39,25 +40,21 @@ async def generate_playlist(
 
     """
     token = await check_authorization(authorization)
-    try:
-        logger = logging.getLogger(__name__)
-        original_tracks = await spotify_service.fetch_all_tracks(
-            token, request.playlist_id
+    logger = logging.getLogger(__name__)
+    original_tracks = await spotify_service.fetch_all_tracks(token, request.playlist_id)
+    if len(original_tracks) <= 10:
+        raise HTTPException(
+            status_code=500, detail="Playlist does not have enough tracks."
         )
-        if len(original_tracks) <= 10:
-            raise HTTPException(
-                status_code=500, detail="Playlist does not have enough tracks."
-            )
 
-        similar_tracks = await spotify_service.fetch_similar_tracks(
-            original_tracks, request.number_of_songs
-        )
-        spotify_tracks = await spotify_service.convert_to_spotify(token, similar_tracks)
-        return JSONResponse(content=spotify_tracks, status_code=200)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    similar_tracks = await spotify_service.fetch_similar_tracks(
+        original_tracks, request.number_of_songs
+    )
+    spotify_tracks = await spotify_service.convert_to_spotify(token, similar_tracks)
+    return JSONResponse(content=spotify_tracks, status_code=200)
 
 
+@catch_http_errors
 async def create_playlist(
     authorization: str = Header(...),
     request: GeneratePlaylistRequest = Body(...),  # noqa: B008
@@ -65,6 +62,7 @@ async def create_playlist(
     pass
 
 
+@catch_http_errors
 async def callback(request: AuthCodeBody):
     """Complete PKCE flow and get access token from Spotify.
 

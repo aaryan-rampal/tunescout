@@ -9,7 +9,6 @@ lint.select = [
   "F",    # pyflakes (undefined names, unused imports)
   "I",    # isort (import sorting)
   "N",    # pep8-naming (class/function naming)
-  "D",    # pydocstyle (docstring rules)
   "UP",   # pyupgrade (syntax modernization)
   "B",    # bugbear (likely bugs and anti-patterns)
   "C4",   # comprehensions (comprehension simplifications)
@@ -22,6 +21,7 @@ lint.ignore = [
   "D104",  # Missing docstring in public package
   "D107",  # Missing docstring in __init__
   "UP006", # In FastAPI, we use List[Model] to generate Swagger UI
+  "UP035", # In FastAPI, we use List[Model] to generate Swagger UI
 ]
 
 [tool.ruff.format]
