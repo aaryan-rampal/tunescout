@@ -1,4 +1,4 @@
-import { List, ListItem, HStack, Avatar, Text, Box } from "@chakra-ui/react";
+import { VStack, SimpleGrid, Avatar, Text, Box } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface Playlist {
@@ -23,19 +23,6 @@ const PlaylistList: React.FC<PlaylistListProps> = ({
     setSelectedId(playlist.id);
   };
 
-  const duplicateIds = playlists
-    .map((p) => p.id)
-    .filter((id, index, self) => self.indexOf(id) !== index);
-
-  if (duplicateIds.length > 0) {
-    const duplicateTracks = playlists.filter((p) =>
-      duplicateIds.includes(p.id),
-    );
-    console.log("Duplicate playlist IDs found:", duplicateTracks);
-  } else {
-    console.log("No duplicate playlist IDs found.");
-  }
-
   return (
     <Box
       maxH="65vh"
@@ -44,10 +31,9 @@ const PlaylistList: React.FC<PlaylistListProps> = ({
       borderRadius="md"
       p={4}
     >
-      <List spacing={4}>
+      <SimpleGrid columns={{ base: 2, sm: 2, md: 3, lg: 4 }} spacing={4}>
         {playlists?.map((playlist) => (
-          <ListItem
-            key={playlist.id}
+          <Box
             p={3}
             borderRadius="md"
             borderWidth="1px"
@@ -56,19 +42,29 @@ const PlaylistList: React.FC<PlaylistListProps> = ({
             // onClick={() => setSelectedPlaylist(playlist)}
             bg={selectedId === playlist.id ? "gray.100" : "white"} // Highlight selected item
             onClick={() => handleSelect(playlist)}
+            w="100%"
+            maxW="200%"
+            mx="auto"
           >
-            <HStack>
+            <VStack padding={2} spacing={2}>
               <Avatar
                 src={playlist.image}
                 name={playlist.name}
-                boxSize="96px"
+                boxSize={{ base: "100px", md: "140px", lg: "196px" }}
                 borderRadius="8px"
               />
-              <Text fontWeight="bold">{playlist.name}</Text>
-            </HStack>
-          </ListItem>
+              <Text
+                fontWeight="bold"
+                fontSize={{ base: "sm", md: "md" }}
+                textAlign="center"
+                noOfLines={3}
+              >
+                {playlist.name}
+              </Text>
+            </VStack>
+          </Box>
         ))}
-      </List>
+      </SimpleGrid>
     </Box>
   );
 };
