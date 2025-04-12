@@ -1,4 +1,4 @@
-# Not Updated to FastAPI yet 
+# README not Updated to FastAPI yet 
 waiting for finals to be over :(
 
 # 🎵 TuneScout: A Music Recommender Bot
