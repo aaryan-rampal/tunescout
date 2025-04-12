@@ -1,3 +1,6 @@
+# Not Updated to FastAPI yet 
+waiting for finals to be over :(
+
 # 🎵 TuneScout: A Music Recommender Bot
 
 TuneScout is an intelligent music recommender bot that provides personalized music suggestions based on user listening history and preferences. By integrating with Spotify and other music services, TuneScout enhances the listening experience with curated playlists and advanced track-matching algorithms.
