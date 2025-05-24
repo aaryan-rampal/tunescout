@@ -34,6 +34,7 @@ const PlaylistList: React.FC<PlaylistListProps> = ({
       <SimpleGrid columns={{ base: 2, sm: 2, md: 3, lg: 4 }} spacing={4}>
         {playlists?.map((playlist) => (
           <Box
+            key={playlist.id} // ✅ Added unique key prop
             p={3}
             borderRadius="md"
             borderWidth="1px"

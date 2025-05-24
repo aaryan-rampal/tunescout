@@ -29,6 +29,7 @@ const router = createBrowserRouter(
   },
 );
 
+// For TanStack Query, we need to wrap QueryClient instance
 const queryClient = new QueryClient();
 
 const App = () => {
