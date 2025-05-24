@@ -20,8 +20,21 @@ class Track(BaseModel):
     similarity: float = 0.0
     runtime: int = 0
 
-    class Config:
-        from_attributes = True
+    # class Config:
+    #     from_attributes = True
+    model_config = {
+        "from_attributesjson_schema_extra": {
+            "example": {
+                "name": "Track Name",
+                "artists": ["Artist 1", "Artist 2"],
+                "uri": "spotify:track:1234567890abcdef",
+                "image_url": "https://example.com/image.jpg",
+                "id": "1234567890abcdef",
+                "similarity": 0.85,
+                "runtime": 240000,  # in milliseconds
+            }
+        }
+    }
 
 
 class GeneratePlaylistRequest(BaseModel):

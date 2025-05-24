@@ -1,15 +1,6 @@
 import { List, ListItem, HStack, Avatar, Text, Box } from "@chakra-ui/react";
 import { useState } from "react";
-
-interface Track {
-  id: string;
-  name: string;
-  artists: string[]; // Changed from artist to artists array
-  image_url: string; // Changed from image to image_url
-  runtime: number; // in milliseconds
-  uri: string;
-  similarity: number;
-}
+import { Track } from "../api/generated";
 
 interface TrackListProps {
   tracks: Track[];
