@@ -4,9 +4,11 @@ import { useState } from "react";
 interface Track {
   id: string;
   name: string;
-  artist: string;
-  image: string;
+  artists: string[]; // Changed from artist to artists array
+  image_url: string; // Changed from image to image_url
   runtime: number; // in milliseconds
+  uri: string;
+  similarity: number;
 }
 
 interface TrackListProps {
@@ -49,7 +51,7 @@ const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
             <HStack justify="space-between" align="center">
               <HStack>
                 <Avatar
-                  src={track.image}
+                  src={track.image_url}
                   name={track.name}
                   boxSize="64px"
                   borderRadius="8px"
@@ -57,7 +59,7 @@ const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
                 <Box>
                   <Text fontWeight="bold">{track.name}</Text>
                   <Text fontSize="sm" color="gray.600">
-                    {track.artist}
+                    {track.artists.join(", ")}
                   </Text>
                 </Box>
               </HStack>

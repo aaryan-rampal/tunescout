@@ -1,4 +1,3 @@
-
 import httpx
 from fastapi import Body, Header, HTTPException
 from fastapi.responses import JSONResponse
@@ -73,7 +72,7 @@ async def generate_playlist(
         original_tracks, request.number_of_songs
     )
     spotify_tracks = await spotify_service.convert_to_spotify(token, similar_tracks)
-    return JSONResponse(content=spotify_tracks, status_code=200)
+    return spotify_tracks
 
 
 @catch_http_errors

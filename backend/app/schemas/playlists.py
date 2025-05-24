@@ -18,6 +18,10 @@ class Track(BaseModel):
     # TODO: should it be id?
     id: str
     similarity: float = 0.0
+    runtime: int = 0
+
+    class Config:
+        from_attributes = True
 
 
 class GeneratePlaylistRequest(BaseModel):
@@ -31,6 +35,17 @@ class GeneratePlaylistRequest(BaseModel):
     playlist_id: str
     number_of_refreshes: int
     number_of_songs: int
+
+
+def GeneratePlaylistResponse(BaseModel):
+    """Pydantic model used for spotify_router.generate_playlist() response.
+
+    Args:
+        BaseModel: Pydantic model.
+
+    """
+
+    tracks: List[Track]
 
 
 class CreatePlaylistRequest(BaseModel):

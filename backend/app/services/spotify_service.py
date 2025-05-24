@@ -201,7 +201,7 @@ async def fetch_similar_tracks(
     all_similar_tracks = remove_duplicates(all_similar_tracks)
     best_tracks = get_best_tracks(all_similar_tracks, number_of_songs)
 
-    print("Similar tracks:", best_tracks)
+    # print("Similar tracks:", best_tracks)
     return best_tracks
 
 
@@ -274,7 +274,7 @@ async def fetch_from_lastapi(
     return similar_tracks
 
 
-async def convert_to_spotify(token: str, similar_tracks: List[Track]) -> List[dict]:
+async def convert_to_spotify(token: str, similar_tracks: List[Track]) -> List[Track]:
     """Convert a list of similar tracks to Spotify format.
 
     Args:
@@ -282,6 +282,46 @@ async def convert_to_spotify(token: str, similar_tracks: List[Track]) -> List[di
         similar_tracks (List[Track]): List of similar tracks.
 
     Returns:
-        List[dict]: List of tracks in Spotify format.
+        List[Track]: List of tracks in Spotify format.
     """
-    pass
+    headers = {"Authorization": f"Bearer {token}"}
+
+    async with httpx.AsyncClient() as client:
+        tasks = [
+            search_spotify_for_track(client, headers, track) for track in similar_tracks
+        ]
+        results = await asyncio.gather(*tasks)
+
+    spotify_tracks = convert_results_to_tracks(results)
+    return spotify_tracks
+
+def convert_results_to_tracks(results: list) -> List[Track]:
+    """Convert Spotify API search results to Track objects."""
+    return [
+        Track(
+            name=result["name"],
+            artists=[artist["name"] for artist in result["artists"]],
+            uri=result["uri"],
+            image_url=result.get("album", {}).get("images", [{}])[0].get("url", ""),
+            id=result["id"],
+            runtime=result.get("duration_ms", 0),
+        )
+        for result in results
+        if result is not None
+    ]
+
+
+async def search_spotify_for_track(
+    client: httpx.AsyncClient, headers: dict, track: Track
+) -> dict | None:
+    """Search for a track on Spotify and return the first result."""
+    search_query = f"{track.name} {', '.join(track.artists)}"
+    params = {"q": search_query, "type": "track", "limit": 1}
+    response = await client.get(
+        "https://api.spotify.com/v1/search", headers=headers, params=params
+    )
+    response.raise_for_status()
+
+    data = response.json()
+    items = data.get("tracks", {}).get("items", [])
+    return items[0] if items else None
