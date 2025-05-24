@@ -55,7 +55,7 @@ const TrackList: React.FC<TrackListProps> = ({ tracks }) => {
                 </Box>
               </HStack>
               <Text fontSize="sm" fontWeight="medium" color="gray.500">
-                {formatRuntime(track.runtime)}
+                {formatRuntime(track.runtime ?? 0)}
               </Text>
             </HStack>
           </ListItem>

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from fastapi import APIRouter, Depends, Header
 
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.post("/get_playlists", tags=["spotify"])
+@router.post("/get_playlists", tags=["spotify"], response_model=List[Dict])
 async def get_playlists(authorization: str = Header(...)):  # noqa: D103
     return await spotify_controller.get_playlists(authorization)
 
@@ -26,7 +26,7 @@ async def get_playlists(authorization: str = Header(...)):  # noqa: D103
 @router.post("/generate_playlist", tags=["spotify"], response_model=List[Track])
 async def generate_playlist(
     request: GeneratePlaylistRequest, authorization: str = Header(...)
-) -> List[Track]:
+):
     return await spotify_controller.generate_playlist(authorization, request)
 
 

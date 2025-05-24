@@ -1,3 +1,4 @@
+from typing import Dict, List
 import httpx
 from fastapi import Body, Header, HTTPException
 from fastapi.responses import JSONResponse
@@ -29,7 +30,7 @@ async def check_authorization(authorization: str) -> str:
 
 
 @catch_http_errors
-async def get_playlists(authorization: str = Header(...)) -> JSONResponse:
+async def get_playlists(authorization: str = Header(...)) -> List[Dict]:
     """Retrieve playlists from Spotify for the authenticated user.
 
     Args:
@@ -40,7 +41,7 @@ async def get_playlists(authorization: str = Header(...)) -> JSONResponse:
     """
     token = await check_authorization(authorization)
     playlists = await spotify_service.get_playlists(token)
-    return JSONResponse(content=playlists, status_code=200)
+    return playlists
 
 
 @catch_http_errors
