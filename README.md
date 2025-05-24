@@ -1,6 +1,3 @@
-# README not Updated to FastAPI yet 
-waiting for finals to be over :(
-
 # 🎵 TuneScout: A Music Recommender Bot
 
 TuneScout is an intelligent music recommender bot that provides personalized music suggestions based on user listening history and preferences. By integrating with Spotify and other music services, TuneScout enhances the listening experience with curated playlists and advanced track-matching algorithms.
@@ -9,7 +6,7 @@ TuneScout is an intelligent music recommender bot that provides personalized mus
 
 ### 🔐 User Authentication
 - Supports **email/password login** and **Spotify OAuth 2.0** authentication.
-- Securely stores **encrypted tokens** using SQLite via Prisma ORM.
+- Securely stores **encrypted tokens** using SQLite.
 - Future support planned for **Apple Music**, **Last.fm** and **Amazon Music**.
 
 ### 👥 User Management
@@ -37,7 +34,7 @@ TuneScout is an intelligent music recommender bot that provides personalized mus
 - **Chakra UI** for sleek and responsive design
 
 ### Backend
-- **Node.js** + **Express**
+- **FastAPI**
 - **Spotify Web API** + **Last.fm API** for music data retrieval
 - (Future) Migration to **AWS Lambda**
 
@@ -58,14 +55,14 @@ cd tunescout
 npm install
 ```
 
-### 3️⃣ Start the Development Server
+### 3️⃣ Start the Frontend Development Server
 ```sh
 npm run dev
 ```
 
 ### 4️⃣ Start the Backend Server
 ```sh
-npm run server
+uvicorn backend.app.main:app --reload
 ```
 
 ## 🎥 Demo Video
